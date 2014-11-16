@@ -1,0 +1,57 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:text="Trieur" />
+
+        <ToggleButton
+            android:id="@+id/select_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select" />
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/parent_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Dossier parent" />
+        
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Nouvelle feuille" />
+        
+        <Button
+            android:id="@+id/new_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Nouveau dossier" />
+
+        
+
+    </LinearLayout>
+
+    <com.gabapps.student.FilesView
+        android:id="@+id/filesView1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" >
+    </com.gabapps.student.FilesView>
+
+</LinearLayout>
