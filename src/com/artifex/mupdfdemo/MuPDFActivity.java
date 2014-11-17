@@ -70,6 +70,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 	private TextView     mPageNumberView;
 	private TextView     mInfoView;
 	private ImageButton  mSearchButton;
+	private ImageButton  mMenuButton;
 	private ImageButton  mReflowButton;
 	private ImageButton  mOutlineButton;
 	private ImageButton	mMoreButton;
@@ -91,8 +92,6 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 	private AsyncTask<Void,Void,MuPDFAlert> mAlertTask;
 	private AlertDialog mAlertDialog;
 	private FilePicker mFilePicker;
-	
-	private String blankFile = Environment.getExternalStorageDirectory()+"/Student/blank.pdf";
 
 	public void createAlertWaiter() {
 		mAlertsActive = true;
@@ -256,13 +255,17 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 	{
 		super.onCreate(savedInstanceState);
 		_bundle=savedInstanceState;
+		
+		mfilesview= new FilesViewLayout(this);
+		
 		Intent intent = getIntent();
-		Log.d("Debug", blankFile);
 		if(Intent.ACTION_MAIN.equals(intent.getAction())) {
-			Uri uri = Uri.fromFile(new File(blankFile));
+			Uri uri = Uri.fromFile(new File(mfilesview.blankFile));
 			openPDF(uri);
 		}
 		else if (Intent.ACTION_VIEW.equals(intent.getAction())) openPDF(intent.getData());
+		
+		createUI(savedInstanceState);
 		
 	}
 	
@@ -332,11 +335,11 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 						return;
 					}
 				}
-				if (buffer != null) {
-					core = openBuffer(buffer, "");
-				} else {
+				//if (buffer != null) {
+				//	core = openBuffer(buffer, "");
+				//} else {
 					core = openFile(Uri.decode(uri.getEncodedPath()));
-				}
+				//}
 				SearchTaskResult.set(null);
 			
 			if (core != null && core.needsPassword()) {
@@ -368,8 +371,6 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			alert.show();
 			return;
 		}
-
-		createUI(_bundle);
 	}
 
 	public void requestPassword(final Bundle savedInstanceState) {
@@ -401,24 +402,31 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 	}
 	
 	public void CreatePDFView() {
-			mDocView=null;
+		SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+		int page = (prefs.getInt("page"+mFileName, 0)>0 ? prefs.getInt("page"+mFileName, 0) : 1);
+		mDocView.setAdapter(new MuPDFPageAdapter(this, this, core));
+		mDocView.resetupChildren();
+		mDocView.refresh(true);
+		mDocView.setDisplayedViewIndex(page);
 	}
 
 	public void createUI(Bundle savedInstanceState) {
 		if (core == null)
 			return;
-		mfilesview= new FilesViewLayout(this);
+		
 		OnFileSelectedListener selectlistener = new OnFileSelectedListener() {
 			
 			@Override
 			public void onSelected(String path, String fileName) {
 				Log.d("Debug", "File selected : "+fileName);
-				//if(fileName.matches("#.pdf$#")) {
+				
+				if(fileName.endsWith(".pdf")) {
 					Log.d("Debug", "It's a PDF file");
 					Uri uri = Uri.fromFile(new File(path+fileName));
 					core=null;
 					openPDF(uri);
-				//}
+					CreatePDFView();
+				}
 				
 				
 			}
@@ -446,6 +454,9 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 					if (mTopBarMode == TopBarMode.Main)
 						hideButtons();
 				}
+				mfilesview.setVisibility(View.INVISIBLE);
+
+				mMenuButton.setVisibility(View.VISIBLE);
 			}
 
 			@Override
@@ -521,6 +532,17 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		mSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				searchModeOn();
+			}
+		});
+		
+		mMenuButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mfilesview.setVisibility(View.VISIBLE);
+				hideButtons();
+				mMenuButton.setVisibility(View.INVISIBLE);
+				
 			}
 		});
 
@@ -903,6 +925,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		mPageNumberView = (TextView)mButtonsView.findViewById(R.id.pageNumber);
 		mInfoView = (TextView)mButtonsView.findViewById(R.id.info);
 		mSearchButton = (ImageButton)mButtonsView.findViewById(R.id.searchButton);
+		mMenuButton = (ImageButton)mButtonsView.findViewById(R.id.menuButton);
 		mReflowButton = (ImageButton)mButtonsView.findViewById(R.id.reflowButton);
 		mOutlineButton = (ImageButton)mButtonsView.findViewById(R.id.outlineButton);
 		mAnnotButton = (ImageButton)mButtonsView.findViewById(R.id.editAnnotButton);

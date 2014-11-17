@@ -19,6 +19,7 @@
             android:id="@+id/select_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:text="Select" />
     </LinearLayout>
     
@@ -27,15 +28,17 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/parent_folder"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Dossier parent" />
+            android:background="@drawable/button"
+            android:src="@drawable/ic_arrow_up"/>
         
         <Button
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:enabled="false"
             android:text="Nouvelle feuille" />
         
         <Button

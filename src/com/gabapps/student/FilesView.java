@@ -1,13 +1,16 @@
 package com.gabapps.student;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import com.gabapps.student.FilesViewAdapter;
 import com.gabapps.student.interfaces.OnFileSelectedListener;
 
+import com.artifex.mupdfdemo.R;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -77,11 +80,14 @@ public class FilesView extends ListView {
       return false;
 
     for (int i = 0; i < files.length; i++) {
-      if (files[i].isDirectory()) {
-        _FolderList.add(files[i].getName());
-      } else {
-        _FilesView.add(files[i].getName());
-      }
+    	if(!files[i].getName().startsWith(".")) {
+    		if (files[i].isDirectory()) {
+    	        _FolderList.add(files[i].getName());
+    	      } else {
+    	        _FilesView.add(files[i].getName());
+    	      }
+    	}
+      
     }
 
     Collections.sort(_FolderList);
@@ -173,7 +179,29 @@ public class FilesView extends ListView {
 			  Toast.makeText(_Context, "L'espace de travail ne peut être créé", 5).show();
 		  }
 	  }
+	  file = new File(path+"/.blank.pdf");
+	  if(!file.exists()) {
+		  
+	  }
 	  setPath(path);
+  }
+  
+  public void makeBlankFile(String path) {
+	  try {
+	        InputStream inputStream = getResources().openRawResource(R.raw.blank);
+	        File file = new File(path);
+	        FileOutputStream fileOutputStream = new FileOutputStream(file);
+	        file.mkdir();
+
+	        byte buf[]=new byte[1024];
+	        int len;
+	        while((len=inputStream.read(buf))>0) {
+	            fileOutputStream.write(buf,0,len);
+	        }
+
+	        fileOutputStream.close();
+	        inputStream.close();
+	    } catch (IOException e1) {}
   }
   
   public void parentFolder() {

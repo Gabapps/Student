@@ -45,7 +45,7 @@ public class ReaderView
 				  mViewCache = new LinkedList<View>();
 	private boolean           mUserInteracting;  // Whether the user is interacting
 	private boolean           mScaling;    // Whether the user is currently pinch zooming
-	private float             mScale     = 1.0f;
+	protected float             mScale     = 1.0f;
 	private int               mXScroll;    // Scroll amounts recorded from events.
 	private int               mYScroll;    // and then accounted for in onLayout
 	private boolean           mReflow = false;

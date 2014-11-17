@@ -7,13 +7,17 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Environment;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 public class FilesViewLayout extends FrameLayout {
@@ -31,22 +35,24 @@ public class FilesViewLayout extends FrameLayout {
 	}
 
 
-	String workspace = Environment.getExternalStorageDirectory()+"/Student";
-	FilesView filesview;
-	Button parent_folder;
-	Button new_folder;
-	Context _context;
+	private String workspace = Environment.getExternalStorageDirectory()+"/Student";
+	private FilesView filesview;
+	private ImageButton parent_folder;
+	private Button new_folder;
+	private Context _context;
+	public String blankFile = Environment.getExternalStorageDirectory()+"/Student/.blank.pdf";
 	
 
 	protected void onCreate(Context context) {
 		_context=context;
-		setBackgroundColor(0xff2d2d2d);
-		setLayoutParams(new LayoutParams(380, LayoutParams.FILL_PARENT));
+		setVisibility(INVISIBLE);
+		setBackgroundColor(getResources().getColor(R.color.toolbar));
+		setLayoutParams(new LayoutParams((int)convertDpToPixel(380, _context), LayoutParams.FILL_PARENT));
 		
 		LinearLayout layout = (LinearLayout) LinearLayout.inflate(_context, R.layout.explorer, null);
 		
 		filesview = (FilesView)layout.findViewById(R.id.filesView1);
-		parent_folder=(Button)layout.findViewById(R.id.parent_folder);
+		parent_folder=(ImageButton)layout.findViewById(R.id.parent_folder);
 		new_folder=(Button)layout.findViewById(R.id.new_folder);
 		
 		//Filesview Config
@@ -97,6 +103,12 @@ public class FilesViewLayout extends FrameLayout {
 	public void setOnFileSelected(OnFileSelectedListener value) {
 	    filesview.setOnFileSelected(value);
 	  }
+	public static float convertDpToPixel(float dp, Context context){
+	    Resources resources = context.getResources();
+	    DisplayMetrics metrics = resources.getDisplayMetrics();
+	    float px = dp * (metrics.densityDpi / 160f);
+	    return px;
+	}
 	
 	
 	public void dialogNewFolder() {

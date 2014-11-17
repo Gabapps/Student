@@ -3,12 +3,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent" >
-
-	<ViewAnimator
-		android:id="@+id/switcher"
+		
+	    <RelativeLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:background="@color/toolbar" >
+		    <ImageButton 
+		    	android:id="@+id/menuButton"
+		    	android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+		    	android:layout_alignParentLeft="true"
+				android:background="@drawable/button"
+				android:src="@drawable/ic_menu"/>
+    	</RelativeLayout>
+	
+
+	<ViewAnimator
+		android:id="@+id/switcher"
+		android:layout_marginLeft="50dp"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true"
 		android:layout_centerHorizontal="true" >
 
 		<RelativeLayout
@@ -55,6 +73,7 @@
 				android:id="@+id/reflowButton"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:visibility="gone"
 				android:layout_centerVertical="true"
 				android:layout_toLeftOf="@+id/outlineButton"
 				android:contentDescription="@string/toggle_reflow_mode"

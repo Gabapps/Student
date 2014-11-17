@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -185,7 +186,7 @@ public class MuPDFReaderView extends ReaderView {
 	private static final float TOUCH_TOLERANCE = 2;
 
 	private void touch_start(float x, float y) {
-
+		Log.d("Debug", ""+mScale);
 		MuPDFView pageView = (MuPDFView)getDisplayedView();
 		if (pageView != null)
 		{
@@ -199,7 +200,7 @@ public class MuPDFReaderView extends ReaderView {
 
 		float dx = Math.abs(x - mX);
 		float dy = Math.abs(y - mY);
-		if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE)
+		if (dx*mScale >= TOUCH_TOLERANCE || dy*mScale >= TOUCH_TOLERANCE)
 		{
 			MuPDFView pageView = (MuPDFView)getDisplayedView();
 			if (pageView != null)

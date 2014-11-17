@@ -47,9 +47,9 @@ public class FilesViewAdapter extends ArrayAdapter<String> {
 	    String s = names[position];
 	    holder.text.setText(s);
 	    if (position<folder_cursor) {
-	      holder.image.setImageResource(R.drawable.folder_icon);
+	      holder.image.setImageResource(R.drawable.ic_dir);
 	    } else {
-	      holder.image.setImageResource(R.drawable.file_icon);
+	      holder.image.setImageResource(R.drawable.ic_doc);
 	    }
 
 	    return rowView;
