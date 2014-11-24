@@ -73,7 +73,8 @@ public class FilesViewLayout extends FrameLayout {
 			}
 		};
 		filesview.setOnPathChangedListener(pathlistener);
-		filesview.openWorkspace(Environment.getExternalStorageDirectory()+"/Student");
+		filesview.openWorkspace(workspace);
+		filesview.makeBlankFile(blankFile);
 		
 		//Parent folder button Config
 		
