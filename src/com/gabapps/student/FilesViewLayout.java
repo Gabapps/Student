@@ -70,23 +70,6 @@ public class FilesViewLayout extends FrameLayout {
 		cancelpaste=(Button)layout.findViewById(R.id.cancel);
 		paste_layout.setVisibility(GONE);
 		
-		paste.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				paste();
-				
-			}
-		});
-		
-		cancelpaste.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				cancelpaste();
-				
-			}
-		});
 		
 		//Filesview Config
 		
@@ -129,6 +112,26 @@ public class FilesViewLayout extends FrameLayout {
 			@Override
 			public void onClick(View v) {
 				dialogNewFolder();
+				
+			}
+		});
+		
+		//Paste cancel buttons Config
+		
+		paste.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				paste();
+				
+			}
+		});
+		
+		cancelpaste.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				cancelpaste();
 				
 			}
 		});

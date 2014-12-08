@@ -82,6 +82,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 	private ImageButton mAnnotButton;
 	private ViewAnimator mTopBarSwitcher;
 	private ImageButton  mLinkButton;
+	private ImageButton mSaveButton;
 	private TopBarMode   mTopBarMode = TopBarMode.Main;
 	private AcceptMode   mAcceptMode;
 	private ImageButton  mSearchBack;
@@ -344,6 +345,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 				File old =new File(path);
 				old.renameTo(new File(old.getParent()+"/"+newfile));
 				mFileName=newfile;
+				mFilePath=old.getParent()+"/"+newfile;
 				mFilenameView.setText(mFileName);
 				core.renameFile(old.getParent()+"/"+newfile);
 				mfilesview.refresh();
@@ -533,7 +535,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			
 			@Override
 			public void OnCopyStart(String file) {
-				// TODO Auto-generated method stub
+				hideButtons();
 				
 			}
 		});
@@ -739,6 +741,23 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		mLinkButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				setLinkHighlight(!mLinkHighlight);
+			}
+		});
+		
+		mSaveButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				new Thread(new Runnable() {
+			        public void run() {
+			        	core.save();
+			        }
+				});
+				
+				if(isFileTemporary()) {
+					mfilesview.startCopy(mFilePath);
+				}
+				
 			}
 		});
 
@@ -1049,6 +1068,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		mSearchFwd = (ImageButton)mButtonsView.findViewById(R.id.searchForward);
 		mSearchText = (EditText)mButtonsView.findViewById(R.id.searchText);
 		mLinkButton = (ImageButton)mButtonsView.findViewById(R.id.linkButton);
+		mSaveButton = (ImageButton)mButtonsView.findViewById(R.id.saveButton);
 		mMoreButton = (ImageButton)mButtonsView.findViewById(R.id.moreButton);
 		mTopBarSwitcher.setVisibility(View.INVISIBLE);
 		mPageNumberView.setVisibility(View.INVISIBLE);
