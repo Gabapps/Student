@@ -2,18 +2,18 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-MY_ROOT := ../..
+MY_ROOT := ../../Projects/mupdf
 
 LOCAL_C_INCLUDES := \
-	../../thirdparty/jbig2dec \
-	../../thirdparty/openjpeg/libopenjpeg \
-	../../thirdparty/jpeg \
-	../../thirdparty/mujs \
-	../../thirdparty/zlib \
-	../../thirdparty/freetype/include \
-	../../scripts/freetype \
-	../../scripts/jpeg \
-	../../scripts/openjpeg \
+	$(MY_ROOT)/thirdparty/jbig2dec \
+	$(MY_ROOT)/thirdparty/openjpeg/libopenjpeg \
+	$(MY_ROOT)/thirdparty/jpeg \
+	$(MY_ROOT)/thirdparty/mujs \
+	$(MY_ROOT)/thirdparty/zlib \
+	$(MY_ROOT)/thirdparty/freetype/include \
+	$(MY_ROOT)/scripts/freetype \
+	$(MY_ROOT)/scripts/jpeg \
+	$(MY_ROOT)/scripts/openjpeg \
 
 LOCAL_CFLAGS := \
 	-DFT2_BUILD_LIBRARY -DDARWIN_NO_CARBON -DHAVE_STDINT_H \

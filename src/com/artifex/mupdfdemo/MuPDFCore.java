@@ -77,6 +77,7 @@ public class MuPDFCore
 	private native long createCookie();
 	private native void destroyCookie(long cookie);
 	private native void abortCookie(long cookie);
+	private native void rename(String filename);
 
 	public native boolean javascriptSupported();
 
@@ -150,7 +151,13 @@ public class MuPDFCore
 	{
 		return wasOpenedFromBuffer;
 	}
+	
+	public void renameFile(String filename)
+	{
+		rename(filename);
+	}
 
+	
 	private synchronized int countPagesSynchronized() {
 		return countPagesInternal();
 	}

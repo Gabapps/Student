@@ -1,6 +1,7 @@
 package com.gabapps.student;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -179,10 +180,8 @@ public class FilesView extends ListView {
 			  Toast.makeText(_Context, "L'espace de travail ne peut être créé", 5).show();
 		  }
 	  }
-	  file = new File(path+"/.blank.pdf");
-	  if(!file.exists()) {
-		  
-	  }
+	  file = new File(path+"/.temp");
+	  file.mkdir();
 	  setPath(path);
   }
   
@@ -202,6 +201,27 @@ public class FilesView extends ListView {
 	        fileOutputStream.close();
 	        inputStream.close();
 	    } catch (IOException e1) {}
+  }
+  
+  public void copy(String target, String newfile) {
+	  try {
+	        InputStream inputStream = new FileInputStream(target);
+	        FileOutputStream fileOutputStream = new FileOutputStream(newfile);
+
+	        byte buf[]=new byte[1024];
+	        int len;
+	        while((len=inputStream.read(buf))>0) {
+	            fileOutputStream.write(buf,0,len);
+	        }
+
+	        fileOutputStream.close();
+	        inputStream.close();
+	    } catch (IOException e1) {}
+  }
+  
+  public void cut(String target, String newfile) {
+	  copy(target, newfile);
+	  (new File(target)).delete();
   }
   
   public void parentFolder() {

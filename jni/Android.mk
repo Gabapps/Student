@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 TOP_LOCAL_PATH := $(LOCAL_PATH)
 
-MUPDF_ROOT := ../..
+MUPDF_ROOT := ../../Projects/mupdf
 
 ifdef NDK_PROFILER
 include android-ndk-profiler.mk

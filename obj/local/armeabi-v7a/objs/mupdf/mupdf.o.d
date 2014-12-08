@@ -46,8 +46,9 @@ obj/local/armeabi-v7a/objs/mupdf/mupdf.o: jni/mupdf.c \
  C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/strings.h \
  C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/memory.h \
  C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/math.h \
- ../../include/mupdf/fitz.h ../../include/mupdf/fitz/version.h \
- ../../include/mupdf/fitz/system.h \
+ ../../Projects/mupdf/include/mupdf/fitz.h \
+ ../../Projects/mupdf/include/mupdf/fitz/version.h \
+ ../../Projects/mupdf/include/mupdf/fitz/system.h \
  C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/assert.h \
  C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/errno.h \
  C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/linux/errno.h \
@@ -65,42 +66,65 @@ obj/local/armeabi-v7a/objs/mupdf/mupdf.o: jni/mupdf.c \
  C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/pathconf.h \
  C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/setjmp.h \
  C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/machine/setjmp.h \
- ../../include/mupdf/memento.h ../../include/mupdf/fitz/context.h \
- ../../include/mupdf/fitz/crypt.h ../../include/mupdf/fitz/getopt.h \
- ../../include/mupdf/fitz/hash.h ../../include/mupdf/fitz/math.h \
- ../../include/mupdf/fitz/string.h ../../include/mupdf/fitz/tree.h \
- ../../include/mupdf/fitz/xml.h ../../include/mupdf/fitz/buffer.h \
- ../../include/mupdf/fitz/stream.h \
- ../../include/mupdf/fitz/compressed-buffer.h \
- ../../include/mupdf/fitz/filter.h ../../include/mupdf/fitz/store.h \
- ../../include/mupdf/fitz/output.h ../../include/mupdf/fitz/colorspace.h \
- ../../include/mupdf/fitz/pixmap.h ../../include/mupdf/fitz/glyph.h \
- ../../include/mupdf/fitz/bitmap.h ../../include/mupdf/fitz/image.h \
- ../../include/mupdf/fitz/function.h ../../include/mupdf/fitz/shade.h \
- ../../include/mupdf/fitz/font.h ../../include/mupdf/fitz/path.h \
- ../../include/mupdf/fitz/text.h ../../include/mupdf/fitz/device.h \
- ../../include/mupdf/fitz/display-list.h \
- ../../include/mupdf/fitz/structured-text.h \
- ../../include/mupdf/fitz/transition.h \
- ../../include/mupdf/fitz/glyph-cache.h ../../include/mupdf/fitz/link.h \
- ../../include/mupdf/fitz/outline.h ../../include/mupdf/fitz/document.h \
- ../../include/mupdf/fitz/annotation.h ../../include/mupdf/fitz/meta.h \
- ../../include/mupdf/fitz/write-document.h \
- ../../include/mupdf/fitz/output-pnm.h \
- ../../include/mupdf/fitz/output-png.h \
- ../../include/mupdf/fitz/output-pwg.h \
- ../../include/mupdf/fitz/output-pcl.h \
- ../../include/mupdf/fitz/output-svg.h \
- ../../include/mupdf/fitz/output-tga.h ../../include/mupdf/pdf.h \
- ../../include/mupdf/pdf/object.h ../../include/mupdf/pdf/document.h \
- ../../include/mupdf/pdf/parse.h ../../include/mupdf/pdf/xref.h \
- ../../include/mupdf/pdf/crypt.h ../../include/mupdf/pdf/page.h \
- ../../include/mupdf/pdf/resource.h ../../include/mupdf/pdf/cmap.h \
- ../../include/mupdf/pdf/font.h ../../include/mupdf/pdf/annot.h \
- ../../include/mupdf/pdf/field.h ../../include/mupdf/pdf/widget.h \
- ../../include/mupdf/pdf/appearance.h ../../include/mupdf/pdf/event.h \
- ../../include/mupdf/pdf/javascript.h \
- ../../include/mupdf/pdf/output-pdf.h
+ ../../Projects/mupdf/include/mupdf/memento.h \
+ ../../Projects/mupdf/include/mupdf/fitz/context.h \
+ ../../Projects/mupdf/include/mupdf/fitz/crypt.h \
+ ../../Projects/mupdf/include/mupdf/fitz/getopt.h \
+ ../../Projects/mupdf/include/mupdf/fitz/hash.h \
+ ../../Projects/mupdf/include/mupdf/fitz/math.h \
+ ../../Projects/mupdf/include/mupdf/fitz/string.h \
+ ../../Projects/mupdf/include/mupdf/fitz/tree.h \
+ ../../Projects/mupdf/include/mupdf/fitz/xml.h \
+ ../../Projects/mupdf/include/mupdf/fitz/buffer.h \
+ ../../Projects/mupdf/include/mupdf/fitz/stream.h \
+ ../../Projects/mupdf/include/mupdf/fitz/compressed-buffer.h \
+ ../../Projects/mupdf/include/mupdf/fitz/filter.h \
+ ../../Projects/mupdf/include/mupdf/fitz/store.h \
+ ../../Projects/mupdf/include/mupdf/fitz/output.h \
+ ../../Projects/mupdf/include/mupdf/fitz/colorspace.h \
+ ../../Projects/mupdf/include/mupdf/fitz/pixmap.h \
+ ../../Projects/mupdf/include/mupdf/fitz/glyph.h \
+ ../../Projects/mupdf/include/mupdf/fitz/bitmap.h \
+ ../../Projects/mupdf/include/mupdf/fitz/image.h \
+ ../../Projects/mupdf/include/mupdf/fitz/function.h \
+ ../../Projects/mupdf/include/mupdf/fitz/shade.h \
+ ../../Projects/mupdf/include/mupdf/fitz/font.h \
+ ../../Projects/mupdf/include/mupdf/fitz/path.h \
+ ../../Projects/mupdf/include/mupdf/fitz/text.h \
+ ../../Projects/mupdf/include/mupdf/fitz/device.h \
+ ../../Projects/mupdf/include/mupdf/fitz/display-list.h \
+ ../../Projects/mupdf/include/mupdf/fitz/structured-text.h \
+ ../../Projects/mupdf/include/mupdf/fitz/transition.h \
+ ../../Projects/mupdf/include/mupdf/fitz/glyph-cache.h \
+ ../../Projects/mupdf/include/mupdf/fitz/link.h \
+ ../../Projects/mupdf/include/mupdf/fitz/outline.h \
+ ../../Projects/mupdf/include/mupdf/fitz/document.h \
+ ../../Projects/mupdf/include/mupdf/fitz/annotation.h \
+ ../../Projects/mupdf/include/mupdf/fitz/meta.h \
+ ../../Projects/mupdf/include/mupdf/fitz/write-document.h \
+ ../../Projects/mupdf/include/mupdf/fitz/output-pnm.h \
+ ../../Projects/mupdf/include/mupdf/fitz/output-png.h \
+ ../../Projects/mupdf/include/mupdf/fitz/output-pwg.h \
+ ../../Projects/mupdf/include/mupdf/fitz/output-pcl.h \
+ ../../Projects/mupdf/include/mupdf/fitz/output-svg.h \
+ ../../Projects/mupdf/include/mupdf/fitz/output-tga.h \
+ ../../Projects/mupdf/include/mupdf/pdf.h \
+ ../../Projects/mupdf/include/mupdf/pdf/object.h \
+ ../../Projects/mupdf/include/mupdf/pdf/document.h \
+ ../../Projects/mupdf/include/mupdf/pdf/parse.h \
+ ../../Projects/mupdf/include/mupdf/pdf/xref.h \
+ ../../Projects/mupdf/include/mupdf/pdf/crypt.h \
+ ../../Projects/mupdf/include/mupdf/pdf/page.h \
+ ../../Projects/mupdf/include/mupdf/pdf/resource.h \
+ ../../Projects/mupdf/include/mupdf/pdf/cmap.h \
+ ../../Projects/mupdf/include/mupdf/pdf/font.h \
+ ../../Projects/mupdf/include/mupdf/pdf/annot.h \
+ ../../Projects/mupdf/include/mupdf/pdf/field.h \
+ ../../Projects/mupdf/include/mupdf/pdf/widget.h \
+ ../../Projects/mupdf/include/mupdf/pdf/appearance.h \
+ ../../Projects/mupdf/include/mupdf/pdf/event.h \
+ ../../Projects/mupdf/include/mupdf/pdf/javascript.h \
+ ../../Projects/mupdf/include/mupdf/pdf/output-pdf.h
 
 C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/jni.h:
 
@@ -196,11 +220,11 @@ C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-ar
 
 C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/math.h:
 
-../../include/mupdf/fitz.h:
+../../Projects/mupdf/include/mupdf/fitz.h:
 
-../../include/mupdf/fitz/version.h:
+../../Projects/mupdf/include/mupdf/fitz/version.h:
 
-../../include/mupdf/fitz/system.h:
+../../Projects/mupdf/include/mupdf/fitz/system.h:
 
 C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/assert.h:
 
@@ -236,120 +260,120 @@ C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-ar
 
 C:/Users/Gabriel/Documents/Programmation/Android/ndk/platforms/android-8/arch-arm/usr/include/machine/setjmp.h:
 
-../../include/mupdf/memento.h:
+../../Projects/mupdf/include/mupdf/memento.h:
 
-../../include/mupdf/fitz/context.h:
+../../Projects/mupdf/include/mupdf/fitz/context.h:
 
-../../include/mupdf/fitz/crypt.h:
+../../Projects/mupdf/include/mupdf/fitz/crypt.h:
 
-../../include/mupdf/fitz/getopt.h:
+../../Projects/mupdf/include/mupdf/fitz/getopt.h:
 
-../../include/mupdf/fitz/hash.h:
+../../Projects/mupdf/include/mupdf/fitz/hash.h:
 
-../../include/mupdf/fitz/math.h:
+../../Projects/mupdf/include/mupdf/fitz/math.h:
 
-../../include/mupdf/fitz/string.h:
+../../Projects/mupdf/include/mupdf/fitz/string.h:
 
-../../include/mupdf/fitz/tree.h:
+../../Projects/mupdf/include/mupdf/fitz/tree.h:
 
-../../include/mupdf/fitz/xml.h:
+../../Projects/mupdf/include/mupdf/fitz/xml.h:
 
-../../include/mupdf/fitz/buffer.h:
+../../Projects/mupdf/include/mupdf/fitz/buffer.h:
 
-../../include/mupdf/fitz/stream.h:
+../../Projects/mupdf/include/mupdf/fitz/stream.h:
 
-../../include/mupdf/fitz/compressed-buffer.h:
+../../Projects/mupdf/include/mupdf/fitz/compressed-buffer.h:
 
-../../include/mupdf/fitz/filter.h:
+../../Projects/mupdf/include/mupdf/fitz/filter.h:
 
-../../include/mupdf/fitz/store.h:
+../../Projects/mupdf/include/mupdf/fitz/store.h:
 
-../../include/mupdf/fitz/output.h:
+../../Projects/mupdf/include/mupdf/fitz/output.h:
 
-../../include/mupdf/fitz/colorspace.h:
+../../Projects/mupdf/include/mupdf/fitz/colorspace.h:
 
-../../include/mupdf/fitz/pixmap.h:
+../../Projects/mupdf/include/mupdf/fitz/pixmap.h:
 
-../../include/mupdf/fitz/glyph.h:
+../../Projects/mupdf/include/mupdf/fitz/glyph.h:
 
-../../include/mupdf/fitz/bitmap.h:
+../../Projects/mupdf/include/mupdf/fitz/bitmap.h:
 
-../../include/mupdf/fitz/image.h:
+../../Projects/mupdf/include/mupdf/fitz/image.h:
 
-../../include/mupdf/fitz/function.h:
+../../Projects/mupdf/include/mupdf/fitz/function.h:
 
-../../include/mupdf/fitz/shade.h:
+../../Projects/mupdf/include/mupdf/fitz/shade.h:
 
-../../include/mupdf/fitz/font.h:
+../../Projects/mupdf/include/mupdf/fitz/font.h:
 
-../../include/mupdf/fitz/path.h:
+../../Projects/mupdf/include/mupdf/fitz/path.h:
 
-../../include/mupdf/fitz/text.h:
+../../Projects/mupdf/include/mupdf/fitz/text.h:
 
-../../include/mupdf/fitz/device.h:
+../../Projects/mupdf/include/mupdf/fitz/device.h:
 
-../../include/mupdf/fitz/display-list.h:
+../../Projects/mupdf/include/mupdf/fitz/display-list.h:
 
-../../include/mupdf/fitz/structured-text.h:
+../../Projects/mupdf/include/mupdf/fitz/structured-text.h:
 
-../../include/mupdf/fitz/transition.h:
+../../Projects/mupdf/include/mupdf/fitz/transition.h:
 
-../../include/mupdf/fitz/glyph-cache.h:
+../../Projects/mupdf/include/mupdf/fitz/glyph-cache.h:
 
-../../include/mupdf/fitz/link.h:
+../../Projects/mupdf/include/mupdf/fitz/link.h:
 
-../../include/mupdf/fitz/outline.h:
+../../Projects/mupdf/include/mupdf/fitz/outline.h:
 
-../../include/mupdf/fitz/document.h:
+../../Projects/mupdf/include/mupdf/fitz/document.h:
 
-../../include/mupdf/fitz/annotation.h:
+../../Projects/mupdf/include/mupdf/fitz/annotation.h:
 
-../../include/mupdf/fitz/meta.h:
+../../Projects/mupdf/include/mupdf/fitz/meta.h:
 
-../../include/mupdf/fitz/write-document.h:
+../../Projects/mupdf/include/mupdf/fitz/write-document.h:
 
-../../include/mupdf/fitz/output-pnm.h:
+../../Projects/mupdf/include/mupdf/fitz/output-pnm.h:
 
-../../include/mupdf/fitz/output-png.h:
+../../Projects/mupdf/include/mupdf/fitz/output-png.h:
 
-../../include/mupdf/fitz/output-pwg.h:
+../../Projects/mupdf/include/mupdf/fitz/output-pwg.h:
 
-../../include/mupdf/fitz/output-pcl.h:
+../../Projects/mupdf/include/mupdf/fitz/output-pcl.h:
 
-../../include/mupdf/fitz/output-svg.h:
+../../Projects/mupdf/include/mupdf/fitz/output-svg.h:
 
-../../include/mupdf/fitz/output-tga.h:
+../../Projects/mupdf/include/mupdf/fitz/output-tga.h:
 
-../../include/mupdf/pdf.h:
+../../Projects/mupdf/include/mupdf/pdf.h:
 
-../../include/mupdf/pdf/object.h:
+../../Projects/mupdf/include/mupdf/pdf/object.h:
 
-../../include/mupdf/pdf/document.h:
+../../Projects/mupdf/include/mupdf/pdf/document.h:
 
-../../include/mupdf/pdf/parse.h:
+../../Projects/mupdf/include/mupdf/pdf/parse.h:
 
-../../include/mupdf/pdf/xref.h:
+../../Projects/mupdf/include/mupdf/pdf/xref.h:
 
-../../include/mupdf/pdf/crypt.h:
+../../Projects/mupdf/include/mupdf/pdf/crypt.h:
 
-../../include/mupdf/pdf/page.h:
+../../Projects/mupdf/include/mupdf/pdf/page.h:
 
-../../include/mupdf/pdf/resource.h:
+../../Projects/mupdf/include/mupdf/pdf/resource.h:
 
-../../include/mupdf/pdf/cmap.h:
+../../Projects/mupdf/include/mupdf/pdf/cmap.h:
 
-../../include/mupdf/pdf/font.h:
+../../Projects/mupdf/include/mupdf/pdf/font.h:
 
-../../include/mupdf/pdf/annot.h:
+../../Projects/mupdf/include/mupdf/pdf/annot.h:
 
-../../include/mupdf/pdf/field.h:
+../../Projects/mupdf/include/mupdf/pdf/field.h:
 
-../../include/mupdf/pdf/widget.h:
+../../Projects/mupdf/include/mupdf/pdf/widget.h:
 
-../../include/mupdf/pdf/appearance.h:
+../../Projects/mupdf/include/mupdf/pdf/appearance.h:
 
-../../include/mupdf/pdf/event.h:
+../../Projects/mupdf/include/mupdf/pdf/event.h:
 
-../../include/mupdf/pdf/javascript.h:
+../../Projects/mupdf/include/mupdf/pdf/javascript.h:
 
-../../include/mupdf/pdf/output-pdf.h:
+../../Projects/mupdf/include/mupdf/pdf/output-pdf.h:

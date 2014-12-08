@@ -541,6 +541,13 @@ JNI_FN(MuPDFCore_isUnencryptedPDFInternal)(JNIEnv * env, jobject thiz)
 	return (cryptVer == 0) ? JNI_TRUE : JNI_FALSE;
 }
 
+JNIEXPORT void JNICALL
+JNI_FN(MuPDFCore_rename)(JNIEnv *env, jobject thiz, jstring jfilename)
+{
+	globals *glo = get_globals(env, thiz);
+	(*env)->ReleaseStringUTFChars(env, jfilename, glo->current_path);
+}
+
 
 JNIEXPORT void JNICALL
 JNI_FN(MuPDFCore_gotoPageInternal)(JNIEnv *env, jobject thiz, int page)

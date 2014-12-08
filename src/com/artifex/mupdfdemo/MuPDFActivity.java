@@ -2,14 +2,17 @@ package com.artifex.mupdfdemo;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.concurrent.Executor;
 
 import com.gabapps.student.FilesView;
 import com.gabapps.student.FilesViewLayout;
+import com.gabapps.student.interfaces.OnCopyPasteListener;
 import com.gabapps.student.interfaces.OnFileSelectedListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -59,6 +62,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 	private final int    FILEPICK_REQUEST=2;
 	private MuPDFCore    core;
 	private String       mFileName;
+	private String       mFilePath;
 	private MuPDFReaderView mDocView;
 	private View         mButtonsView;
 	private FilesViewLayout    mfilesview;
@@ -214,6 +218,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 	private MuPDFCore openFile(String path)
 	{
 		int lastSlashPos = path.lastIndexOf('/');
+		mFilePath=path;
 		mFileName = new String(lastSlashPos == -1
 					? path
 					: path.substring(lastSlashPos+1));
@@ -261,12 +266,91 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		Intent intent = getIntent();
 		if(Intent.ACTION_MAIN.equals(intent.getAction())) {
 			Uri uri = Uri.fromFile(new File(mfilesview.blankFile));
+			Log.d("Debug", uri.toString());
 			openPDF(uri);
 		}
-		else if (Intent.ACTION_VIEW.equals(intent.getAction())) openPDF(intent.getData());
+		else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+			Uri uri =intent.getData();
+			if(!uri.getPath().contains("/Student/")) {
+				dialogImportFile(uri.getPath());
+				uri = Uri.fromFile(new File(mfilesview.blankFile));
+			}
+			openPDF(uri);
+		}
 		
 		createUI(savedInstanceState);
 		
+	}
+	
+
+	public void dialogImportFile(final String path) {
+		AlertDialog.Builder builder = new Builder(this);
+		builder.setTitle("Souhaitez-vous importer ce fichier dans votre espace de travail ?");
+		builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Uri pdf = Uri.fromFile(new File(path));
+				core=null;
+				openPDF(pdf);
+				CreatePDFView();
+			}
+		});
+		
+		builder.setNeutralButton("Copier", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				mfilesview.startCopy(path);
+			}
+		});
+		
+		/*builder.setPositiveButton("Couper", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});*/
+		
+		builder.show();
+	}
+	
+	public void dialogRename(final String path) {
+		AlertDialog.Builder builder = new Builder(this);
+		final EditText editText = new EditText(this);
+		
+		String oldfile;
+		int lastSlashPos = path.lastIndexOf('/');
+		oldfile = new String(lastSlashPos == -1
+					? path
+					: path.substring(lastSlashPos+1,path.length()-4));
+		editText.setSingleLine();
+		editText.setText(oldfile);
+		builder.setView(editText);
+		builder.setTitle("Renommer");
+		builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		
+		builder.setPositiveButton("Renommer", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String newfile=editText.getText().toString()+".pdf";
+				File old =new File(path);
+				old.renameTo(new File(old.getParent()+"/"+newfile));
+				mFileName=newfile;
+				mFilenameView.setText(mFileName);
+				core.renameFile(old.getParent()+"/"+newfile);
+				mfilesview.refresh();
+			}
+		});
+		
+		builder.show();
 	}
 	
 	public void openPDF(Uri uri) {
@@ -341,6 +425,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 					core = openFile(Uri.decode(uri.getEncodedPath()));
 				//}
 				SearchTaskResult.set(null);
+				if(mFilenameView!=null) mFilenameView.setText(mFileName);
 			
 			if (core != null && core.needsPassword()) {
 				requestPassword(_bundle);
@@ -432,6 +517,27 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			}
 		};
 		mfilesview.setOnFileSelected(selectlistener);
+		
+		mfilesview.setOnCopyPaste(new OnCopyPasteListener() {
+			
+			@Override
+			public void OnPaste(String file) {
+				if(isFileTemporary()) {
+					Uri pdf = Uri.fromFile(new File(file));
+					core=null;
+					openPDF(pdf);
+					CreatePDFView();
+				}
+				
+			}
+			
+			@Override
+			public void OnCopyStart(String file) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		// Now create the UI.
 		// First create the document view
 		mDocView = new MuPDFReaderView(this) {
@@ -448,13 +554,13 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 
 			@Override
 			protected void onTapMainDocArea() {
-				if (!mButtonsVisible) {
+				if (!mButtonsVisible&&mfilesview.getVisibility()==INVISIBLE) {
 					showButtons();
 				} else {
 					if (mTopBarMode == TopBarMode.Main)
 						hideButtons();
 				}
-				mfilesview.setVisibility(View.INVISIBLE);
+				if(!mfilesview.isLocked()) mfilesview.setVisibility(View.INVISIBLE);
 
 				mMenuButton.setVisibility(View.VISIBLE);
 			}
@@ -513,6 +619,14 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 
 		// Set the file-name text
 		mFilenameView.setText(mFileName);
+		mFilenameView.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				dialogRename(mFilePath);
+				
+			}
+		});
 
 		// Activate the seekbar
 		mPageSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -1095,7 +1209,12 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		mTopBarMode = TopBarMode.Annot;
 		mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
 	}
-
+	
+	private boolean isFileTemporary() {
+		return (mFilePath.endsWith("/.temp/"+mFileName
+				));
+	}
+	
 	private void showKeyboard() {
 		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		if (imm != null)

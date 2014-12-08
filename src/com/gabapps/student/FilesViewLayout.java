@@ -1,6 +1,7 @@
 package com.gabapps.student;
 
 import com.artifex.mupdfdemo.R;
+import com.gabapps.student.interfaces.OnCopyPasteListener;
 import com.gabapps.student.interfaces.OnFileSelectedListener;
 
 import android.app.AlertDialog;
@@ -39,12 +40,22 @@ public class FilesViewLayout extends FrameLayout {
 	private FilesView filesview;
 	private ImageButton parent_folder;
 	private Button new_folder;
+	private LinearLayout paste_layout;
+	private Button paste;
+	private Button cancelpaste;
+	
+	private String filetopaste;
+	
+	private OnCopyPasteListener _oncopypaste;
+	
 	private Context _context;
-	public String blankFile = Environment.getExternalStorageDirectory()+"/Student/.blank.pdf";
+	private boolean _lock;
+	public String blankFile = Environment.getExternalStorageDirectory()+"/Student/.temp/Sans titre.pdf";
 	
 
 	protected void onCreate(Context context) {
 		_context=context;
+		_lock=false;
 		setVisibility(INVISIBLE);
 		setBackgroundColor(getResources().getColor(R.color.toolbar));
 		setLayoutParams(new LayoutParams((int)convertDpToPixel(380, _context), LayoutParams.FILL_PARENT));
@@ -54,6 +65,28 @@ public class FilesViewLayout extends FrameLayout {
 		filesview = (FilesView)layout.findViewById(R.id.filesView1);
 		parent_folder=(ImageButton)layout.findViewById(R.id.parent_folder);
 		new_folder=(Button)layout.findViewById(R.id.new_folder);
+		paste_layout=(LinearLayout)layout.findViewById(R.id.pastelayout);
+		paste=(Button)layout.findViewById(R.id.paste);		
+		cancelpaste=(Button)layout.findViewById(R.id.cancel);
+		paste_layout.setVisibility(GONE);
+		
+		paste.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				paste();
+				
+			}
+		});
+		
+		cancelpaste.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				cancelpaste();
+				
+			}
+		});
 		
 		//Filesview Config
 		
@@ -63,10 +96,12 @@ public class FilesViewLayout extends FrameLayout {
 			public void onChanged(String path) {
 				if(path.equals(workspace+"/")&&parent_folder.isEnabled()) {
 					parent_folder.setEnabled(false);
+					parent_folder.setVisibility(INVISIBLE);
 					new_folder.setText("Nouvelle matière");
 				}
 				if(!path.equals(workspace+"/")&&!parent_folder.isEnabled()) {
 					parent_folder.setEnabled(true);
+					parent_folder.setVisibility(VISIBLE);
 					new_folder.setText("Nouveau dossier");
 				}
 				
@@ -101,14 +136,56 @@ public class FilesViewLayout extends FrameLayout {
 		addView(layout);
 	}
 	
+	public void startCopy(String file) {
+		setVisibility(VISIBLE);
+		paste_layout.setVisibility(VISIBLE);
+		setLock(true);
+		filetopaste=file;
+		if(_oncopypaste!=null) _oncopypaste.OnCopyStart(file);
+	}
+	
+	public void paste() {
+		int lastSlashPos = filetopaste.lastIndexOf('/');
+		String filename = new String(lastSlashPos == -1
+					? filetopaste
+					: filetopaste.substring(lastSlashPos+1));
+		filesview.copy(filetopaste, filesview.getPath()+filename);
+		setLock(false);
+		paste_layout.setVisibility(GONE);
+		refresh();
+		if(_oncopypaste!=null) _oncopypaste.OnPaste(filesview.getPath()+filename);
+	}
+	
+	public void cancelpaste() {
+		setLock(false);
+		paste_layout.setVisibility(GONE);
+	}
+	
 	public void setOnFileSelected(OnFileSelectedListener value) {
 	    filesview.setOnFileSelected(value);
 	  }
+	
+	public void setOnCopyPaste(OnCopyPasteListener value) {
+	    _oncopypaste=value;
+	  }
+	
 	public static float convertDpToPixel(float dp, Context context){
 	    Resources resources = context.getResources();
 	    DisplayMetrics metrics = resources.getDisplayMetrics();
 	    float px = dp * (metrics.densityDpi / 160f);
 	    return px;
+	}
+	
+	public void refresh() {
+		filesview.setPath(filesview.getPath());
+	}
+	
+	public void setLock(boolean lock) {
+		_lock=lock;
+	}
+	
+	public boolean isLocked() {
+		return _lock;
 	}
 	
 	
