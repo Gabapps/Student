@@ -359,5 +359,7 @@ public class MuPDFCore
 	public synchronized void insertPageat(int at) {
 		numPages=-1;
 		insertPage(at);
+		countPages();
+		gotoPage(at);
 	}
 }

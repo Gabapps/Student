@@ -72,7 +72,7 @@ public final class R {
     public static final class id {
         public static final int acceptButton=0x7f090021;
         public static final int annotType=0x7f090020;
-        public static final int cancel=0x7f09002c;
+        public static final int cancel=0x7f09002d;
         public static final int cancelAcceptButton=0x7f09001f;
         public static final int cancelAnnotButton=0x7f090011;
         public static final int cancelDeleteButton=0x7f090017;
@@ -82,28 +82,29 @@ public final class R {
         public static final int deleteButton=0x7f090019;
         public static final int deleteLabel=0x7f090018;
         public static final int docNameText=0x7f090003;
-        public static final int download=0x7f09002f;
+        public static final int download=0x7f090030;
         public static final int editAnnotButton=0x7f090005;
-        public static final int fileicon=0x7f09002d;
-        public static final int filename=0x7f09002e;
-        public static final int filesView1=0x7f090029;
+        public static final int fileicon=0x7f09002e;
+        public static final int filename=0x7f09002f;
+        public static final int filesView1=0x7f09002a;
         public static final int highlightButton=0x7f090012;
-        public static final int icon=0x7f090032;
+        public static final int icon=0x7f090033;
         public static final int info=0x7f090025;
         public static final int inkButton=0x7f090015;
         public static final int linkButton=0x7f090006;
         public static final int lowerButtons=0x7f090022;
         public static final int menuButton=0x7f090000;
         public static final int moreButton=0x7f09000a;
-        public static final int name=0x7f090033;
-        public static final int new_folder=0x7f090028;
+        public static final int name=0x7f090034;
+        public static final int new_folder=0x7f090029;
+        public static final int new_page=0x7f090028;
         public static final int outlineButton=0x7f090008;
-        public static final int page=0x7f090031;
+        public static final int page=0x7f090032;
         public static final int pageNumber=0x7f090024;
         public static final int pageSlider=0x7f090023;
         public static final int parent_folder=0x7f090027;
-        public static final int paste=0x7f09002b;
-        public static final int pastelayout=0x7f09002a;
+        public static final int paste=0x7f09002c;
+        public static final int pastelayout=0x7f09002b;
         public static final int printButton=0x7f09001c;
         public static final int reflowButton=0x7f090007;
         public static final int saveButton=0x7f090004;
@@ -114,7 +115,7 @@ public final class R {
         public static final int select_mode=0x7f090026;
         public static final int strikeOutButton=0x7f090014;
         public static final int switcher=0x7f090001;
-        public static final int title=0x7f090030;
+        public static final int title=0x7f090031;
         public static final int topBar0Main=0x7f090002;
         public static final int topBar1Search=0x7f09000b;
         public static final int topBar2Annot=0x7f090010;
@@ -122,7 +123,7 @@ public final class R {
         public static final int topBar4More=0x7f09001a;
         public static final int topBar5Accept=0x7f09001e;
         public static final int underlineButton=0x7f090013;
-        public static final int webview=0x7f090034;
+        public static final int webview=0x7f090035;
     }
     public static final class layout {
         public static final int buttons=0x7f030000;

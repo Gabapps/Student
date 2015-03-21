@@ -33,6 +33,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
@@ -520,7 +521,15 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			}
 		};
 		mfilesview.setOnFileSelected(selectlistener);
-		
+		mfilesview.sendnewPageListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				core.insertPageat(0);
+				mfilesview.setVisibility(View.INVISIBLE);
+				mMenuButton.setVisibility(View.VISIBLE);
+			}
+		});
 		mfilesview.setOnCopyPaste(new OnCopyPasteListener() {
 			
 			@Override
@@ -566,6 +575,8 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 				if(!mfilesview.isLocked()) mfilesview.setVisibility(View.INVISIBLE);
 
 				mMenuButton.setVisibility(View.VISIBLE);
+
+				//core.insertPageat(0);
 			}
 
 			@Override

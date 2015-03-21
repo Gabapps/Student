@@ -1,5 +1,6 @@
 package com.gabapps.student;
 
+import com.artifex.mupdfdemo.MuPDFCore;
 import com.artifex.mupdfdemo.R;
 import com.gabapps.student.interfaces.OnCopyPasteListener;
 import com.gabapps.student.interfaces.OnFileSelectedListener;
@@ -40,6 +41,7 @@ public class FilesViewLayout extends FrameLayout {
 	private FilesView filesview;
 	private ImageButton parent_folder;
 	private Button new_folder;
+	private Button new_page;
 	private LinearLayout paste_layout;
 	private Button paste;
 	private Button cancelpaste;
@@ -65,6 +67,7 @@ public class FilesViewLayout extends FrameLayout {
 		filesview = (FilesView)layout.findViewById(R.id.filesView1);
 		parent_folder=(ImageButton)layout.findViewById(R.id.parent_folder);
 		new_folder=(Button)layout.findViewById(R.id.new_folder);
+		new_page=(Button)layout.findViewById(R.id.new_page);
 		paste_layout=(LinearLayout)layout.findViewById(R.id.pastelayout);
 		paste=(Button)layout.findViewById(R.id.paste);		
 		cancelpaste=(Button)layout.findViewById(R.id.cancel);
@@ -112,7 +115,6 @@ public class FilesViewLayout extends FrameLayout {
 			@Override
 			public void onClick(View v) {
 				dialogNewFolder();
-				
 			}
 		});
 		
@@ -137,6 +139,10 @@ public class FilesViewLayout extends FrameLayout {
 		});
 		
 		addView(layout);
+	}
+	
+	public void sendnewPageListener(OnClickListener listener) {
+		new_page.setOnClickListener(listener);
 	}
 	
 	public void startCopy(String file) {

@@ -62,7 +62,7 @@ public class FilesView extends ListView {
     _Context = context;
     setOnItemClickListener(_OnItemClick);
     
-    FTP.setServer("192.168.1.11", 21);
+    FTP.setServer("192.168.1.13", 21);
 	
 	FTP.setUser("Gab", "");
 	new Thread(new Runnable() {
@@ -176,7 +176,7 @@ public class FilesView extends ListView {
   }
 
   public void setPath(String value) {
-	  Log.d("Debug", "New path"+value);
+	  //Log.d("Debug", "New path"+value);
     if (value.length() == 0) {
       value = "/";
     } else {
@@ -361,7 +361,6 @@ public class FilesView extends ListView {
       String fileName = getItemAtPosition(position).toString();
       //if (new File(_Path+fileName).isDirectory()) {
       if (position < _FolderList.size()) {
-    	  Log.d("Debug", "ok");
         setPath(getRealPathName(fileName));
       } else {
         if (_OnFileSelectedListener != null)
