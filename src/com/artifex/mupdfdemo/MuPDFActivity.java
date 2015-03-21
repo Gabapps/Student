@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.Executor;
 
+import com.gabapps.student.FTP;
 import com.gabapps.student.FilesView;
 import com.gabapps.student.FilesViewLayout;
 import com.gabapps.student.interfaces.OnCopyPasteListener;
@@ -752,7 +753,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			        public void run() {
 			        	core.save();
 			        }
-				});
+				}).start();
 				
 				if(isFileTemporary()) {
 					mfilesview.startCopy(mFilePath);
@@ -896,6 +897,8 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			mAlertTask.cancel(true);
 			mAlertTask = null;
 		}
+		FTP.logout();
+		FTP.disconnect();
 		core = null;
 		super.onDestroy();
 	}

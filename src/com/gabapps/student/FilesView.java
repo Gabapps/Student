@@ -8,11 +8,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+
 import com.gabapps.student.FilesViewAdapter;
 import com.gabapps.student.interfaces.OnFileSelectedListener;
 
 import com.artifex.mupdfdemo.R;
 import android.content.Context;
+import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -56,6 +61,19 @@ public class FilesView extends ListView {
   private void init(Context context) {
     _Context = context;
     setOnItemClickListener(_OnItemClick);
+    
+    FTP.setServer("192.168.1.11", 21);
+	
+	FTP.setUser("Gab", "");
+	new Thread(new Runnable() {
+        public void run() {
+			FTP.connect();
+			FTP.login();
+			String temp = new String(_Path);
+			_Path = "waiting";
+			setPath(temp);
+        }
+	}).start();
   }
 
   private Context _Context = null;
@@ -63,36 +81,87 @@ public class FilesView extends ListView {
   private ArrayList<String> _FolderList = new ArrayList<String>();
   private ArrayList<String> _FilesView = new ArrayList<String>();
   private FilesViewAdapter _Adapter = null;
+  
+  //ASyncTask
+  
+  AsyncTask<String, Void, FTPFile[]> _listftpfiletask;
+  private FTPFile[] ftpfiles;
+  
 
   // Property
-  private String _Path = "";
+  private String _Path = "waiting";
 
   // Event
   private OnPathChangedListener _OnPathChangedListener = null;
   private OnFileSelectedListener _OnFileSelectedListener = null;
+  
+  private boolean _pathhaschanged = false;
+  
+  private int ftpfile_cursor=0;
+  private int ftpfolder_cursor=0;
 
   private boolean openPath(String path) {
     _FolderList.clear();
     _FilesView.clear();
+    
+    String ftppath = path.substring(path.indexOf("Student/")+7, path.length());
 
+    
+    if(FTP.logged) {
+    	if(_pathhaschanged) {
+    		ftpfiles=null;
+    		_listftpfiletask = new AsyncTask<String, Void, FTPFile[]>() {
+    			@Override
+    			protected FTPFile[] doInBackground(String... path) {
+    				return FTP.listFTPFiles(path[0]);
+    			}
+
+    			@Override
+    			protected void onPostExecute(FTPFile[] result) {
+    				ftpfiles = result;
+    				refresh();
+    			}
+    		};
+    		_listftpfiletask.execute(ftppath);
+    	}
+    }
     File file = new File(path);
     File[] files = file.listFiles();
-    if (files == null)
-      return false;
-
-    for (int i = 0; i < files.length; i++) {
-    	if(!files[i].getName().startsWith(".")) {
-    		if (files[i].isDirectory()) {
-    	        _FolderList.add(files[i].getName());
-    	      } else {
-    	        _FilesView.add(files[i].getName());
-    	      }
-    	}
-      
+    /*if (files == null)
+      return false;*/
+    if (files != null) {
+	    for (int i = 0; i < files.length; i++) {
+	    	if(!files[i].getName().startsWith(".")) {
+	    		if (files[i].isDirectory()) {
+	    	        _FolderList.add(files[i].getName());
+	    	      } else {
+	    	        _FilesView.add(files[i].getName());
+	    	      }
+	    	}
+	    }
     }
+    
+    ftpfile_cursor = _FilesView.size();
+    ftpfolder_cursor = _FolderList.size();
+    if(ftpfiles!=null) {
+	    for (int i = 0; i < ftpfiles.length; i++) {
+	    	if(!ftpfiles[i].getName().startsWith(".")) {
+	    		if (ftpfiles[i].isDirectory()) {
+	    	        if(!_FolderList.contains(ftpfiles[i].getName())) _FolderList.add(ftpfiles[i].getName());
+    			} 
+	    		else {
+	    			if(!_FilesView.contains(ftpfiles[i].getName())) _FilesView.add(ftpfiles[i].getName());
+	    		}
+	    	}
+	    }
+    }
+    
+    ftpfile_cursor += _FolderList.size();
+    
+    
 
-    Collections.sort(_FolderList);
-    Collections.sort(_FilesView);
+    //Collections.sort(_FolderList);
+    //Collections.sort(_FilesView);
 
     return true;
   }
@@ -102,7 +171,7 @@ public class FilesView extends ListView {
     _List.addAll(_FolderList);
     _List.addAll(_FilesView);
     String [] filesname = _List.toArray(new String[_List.size()]);
-    _Adapter = new FilesViewAdapter(_Context,filesname,_FolderList.size());
+    _Adapter = new FilesViewAdapter(_Context,filesname,_FolderList.size(), ftpfile_cursor, ftpfolder_cursor);
     setAdapter(_Adapter);
   }
 
@@ -116,13 +185,17 @@ public class FilesView extends ListView {
       if (lastChar.matches("/") == false)
         value = value + "/";
     }
+	  boolean changed = !value.equals(_Path);
+      _pathhaschanged = changed;
 
     if (openPath(value)) {
       _Path = value;
       Log.d("Debug", "New path"+_Path);
       updateAdapter();
-      if (_OnPathChangedListener != null)
-        _OnPathChangedListener.onChanged(value);
+      if(changed) {
+	      if (_OnPathChangedListener != null)
+	        _OnPathChangedListener.onChanged(value);
+	   }
     }
   }
   
@@ -286,7 +359,8 @@ public class FilesView extends ListView {
     public void onItemClick(AdapterView<?> arg0, View arg1, int position,
         long id) {
       String fileName = getItemAtPosition(position).toString();
-      if (new File(_Path+fileName).isDirectory()) {
+      //if (new File(_Path+fileName).isDirectory()) {
+      if (position < _FolderList.size()) {
     	  Log.d("Debug", "ok");
         setPath(getRealPathName(fileName));
       } else {

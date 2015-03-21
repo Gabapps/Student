@@ -547,6 +547,30 @@ JNI_FN(MuPDFCore_rename)(JNIEnv *env, jobject thiz, jstring jfilename)
 	globals *glo = get_globals(env, thiz);
 	(*env)->ReleaseStringUTFChars(env, jfilename, glo->current_path);
 }
+////BBBBBB///
+JNIEXPORT void JNICALL
+JNI_FN(MuPDFCore_insertPage)(JNIEnv *env, jobject thiz, int at)
+{
+	globals *glo = get_globals(env, thiz);
+	fz_rect rect;
+	rect.x0 = 0;
+	rect.y0 = 0;
+	rect.x1 = 595;
+	rect.y1 = 842;
+	if (glo == NULL)
+			return;
+	fz_context *ctx = glo->ctx;
+	fz_try(ctx) {
+		pdf_page* page = pdf_create_page(glo->doc, rect, glo->resolution, 0);
+		LOGI("%d pages before", fz_count_pages(glo->doc));
+		pdf_insert_page(glo->doc, page, at);
+		LOGI("%d pages after", fz_count_pages(glo->doc));
+		LOGI("Blank page inserted");
+	}
+	fz_catch(ctx) {
+		LOGE("Can't insert a page");
+	}
+}
 
 
 JNIEXPORT void JNICALL
@@ -612,6 +636,7 @@ JNI_FN(MuPDFCore_gotoPageInternal)(JNIEnv *env, jobject thiz, int page)
 		fz_bound_page(glo->doc, pc->page, &pc->media_box);
 		fz_scale(&ctm, zoom, zoom);
 		rect = pc->media_box;
+		LOGI("x0 %f y0 %f x1 %f y1 %f", rect.x0, rect.y0, rect.x1, rect.y1);
 		fz_round_rect(&bbox, fz_transform_rect(&rect, &ctm));
 		pc->width = bbox.x1-bbox.x0;
 		pc->height = bbox.y1-bbox.y0;
