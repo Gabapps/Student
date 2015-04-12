@@ -79,7 +79,8 @@ public class MuPDFCore
 	private native void abortCookie(long cookie);
 	private native void rename(String filename);
 	private native void insertPage(int at);
-
+	private native int getCurrentPageInternal();
+	
 	public native boolean javascriptSupported();
 
 	public class Cookie
@@ -357,9 +358,13 @@ public class MuPDFCore
 	}
 	
 	public synchronized void insertPageat(int at) {
+		if(at>numPages) at=numPages;
 		numPages=-1;
 		insertPage(at);
 		countPages();
 		gotoPage(at);
+	}
+	public synchronized int getCurrentPage() {
+		return getCurrentPageInternal();
 	}
 }

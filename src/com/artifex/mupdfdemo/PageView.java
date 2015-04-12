@@ -405,11 +405,11 @@ public abstract class PageView extends ViewGroup {
 						drawPath(canvas, paint, scale);
 
 						paint.setStyle(Paint.Style.STROKE);
-						canvas.drawPath(path, paint);
+						//canvas.drawPath(path, paint);
 					}
 				}
 				
-				void drawPath(Canvas canvas, Paint paint, float scale) {//modified
+				void drawPath(Canvas canvas, Paint paint, float scale) {//TODO : do it in a Thread
 					for(int i=0;i<mDrawing.size();i++) {
 						for(int j=0; j<mDrawing.get(i).size()-1;j++) {
 							PointF v1=mDrawing.get(i).get(j), v2=mDrawing.get(i).get(j+1);

@@ -15,7 +15,6 @@ public class FTP {
 	private static FTPClient client = new FTPClient();
 	private static String server = "localhost";
 	private static int port = 21;
-	public static boolean logged=false;
 	private static String login = "anonymous", password = "";
 	
 	private static void showServerReply() {
@@ -26,6 +25,10 @@ public class FTP {
             }
         }
     }
+	
+	public static boolean isConnected()	 {
+		return client.isConnected();
+	}
 	
 	public static void setServer(String server, int port) {
 		FTP.server = server;
@@ -62,7 +65,6 @@ public class FTP {
             if (!success) {
             	Log.d("FTP", "Could not login to the server");
             } else {
-            	logged=true;
             	Log.d("FTP", "LOGGED IN SERVER");
             }
         } catch (IOException ex) {
@@ -72,31 +74,20 @@ public class FTP {
 	}
 	
 	public static void disconnect() {
-		new Thread(new Runnable() {
-	        public void run() {
-		        try {
-					client.disconnect();
-				} catch (IOException e) {
-					e.printStackTrace();
-					Log.d("FTP", "Oops! Something wrong happened");
-				}
-	        }
-		}).start();
-		
+		try {
+			client.disconnect();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Log.d("FTP", "Oops! Something wrong happened");
+		}
 	}
 	public static void logout() {
-		new Thread(new Runnable() {
-	        public void run() {
-	        	try {
-	    			logged=false; // A revoir
-	    			client.logout();
-	    		} catch (IOException e) {
-	    			e.printStackTrace();
-	    			Log.d("FTP", "Oops! Something wrong happened");
-	    		}
-	        }
-		}).start();
-		
+		try {
+			client.logout();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Log.d("FTP", "Oops! Something wrong happened");
+		}
 	}
 	
 	public static FTPFile[] listFTPFiles(String path) {
@@ -111,7 +102,7 @@ public class FTP {
 		return files;
 	}
 	
-	public static boolean downloadSingleFile(FTPClient ftpClient,
+	public static boolean downloadSingleFile(
 	        String remoteFilePath, String savePath) throws IOException {
 	    File downloadFile = new File(savePath);
 	     
@@ -123,8 +114,8 @@ public class FTP {
 	    OutputStream outputStream = new BufferedOutputStream(
 	            new FileOutputStream(downloadFile));
 	    try {
-	        ftpClient.setFileType(2); //BINARY FILE TYPE
-	        return ftpClient.retrieveFile(remoteFilePath, outputStream);
+	    	client.setFileType(2); //BINARY FILE TYPE
+	        return client.retrieveFile(remoteFilePath, outputStream);
 	    } catch (IOException ex) {
 	        throw ex;
 	    } finally {
@@ -177,7 +168,7 @@ public class FTP {
 	                        saveDir);
 	            } else {
 	                // download the file
-	                boolean success = downloadSingleFile(ftpClient, filePath,
+	                boolean success = downloadSingleFile(filePath,
 	                        newDirPath);
 	                if (success) {
 	                	Log.d("FTP", "DOWNLOADED the file: " + filePath);

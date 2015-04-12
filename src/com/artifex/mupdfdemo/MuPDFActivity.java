@@ -1,6 +1,7 @@
 package com.artifex.mupdfdemo;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.Executor;
@@ -11,6 +12,7 @@ import com.gabapps.student.FilesViewLayout;
 import com.gabapps.student.interfaces.OnCopyPasteListener;
 import com.gabapps.student.interfaces.OnFileSelectedListener;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -23,6 +25,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -100,6 +103,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 	private AlertDialog mAlertDialog;
 	private FilePicker mFilePicker;
 
+	@SuppressLint("NewApi")
 	public void createAlertWaiter() {
 		mAlertsActive = true;
 		// All mupdf library calls are performed on asynchronous tasks to avoid stalling
@@ -503,18 +507,70 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		if (core == null)
 			return;
 		
-		OnFileSelectedListener selectlistener = new OnFileSelectedListener() {
-			
+		final AsyncTask<String, Void, String> downloadFTPFile = new AsyncTask<String, Void, String>() {
 			@Override
-			public void onSelected(String path, String fileName) {
-				Log.d("Debug", "File selected : "+fileName);
-				
-				if(fileName.endsWith(".pdf")) {
-					Log.d("Debug", "It's a PDF file");
-					Uri uri = Uri.fromFile(new File(path+fileName));
+			protected String doInBackground(String... path) {
+				try {
+					FTP.downloadSingleFile(path[0], path[1]);
+					return path[1];
+				} catch (IOException e) {
+					Log.e("FTP", "Can't download file");
+				}
+				return null;
+
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				if(result != null) {
+					Uri uri = Uri.fromFile(new File(result));
 					core=null;
 					openPDF(uri);
 					CreatePDFView();
+				}
+			}
+		};
+		
+		OnFileSelectedListener selectlistener = new OnFileSelectedListener() {
+			
+			@Override
+			public void onSelected(String path, String fileName, boolean FTP) {
+				Log.d("Debug", "File selected : "+fileName);
+				if(fileName.endsWith(".pdf")) {
+					Log.d("Debug", "It's a PDF file");
+					if(FTP) {
+						new AsyncTask<String, Void, String>() {
+							@Override
+							protected String doInBackground(String... path) {
+								try {
+									com.gabapps.student.FTP.downloadSingleFile(path[0], path[1]);
+									Log.d("FTP", "Downloaded file");
+									return path[1];
+								} catch (IOException e) {
+									Log.e("FTP", "Can't download file");
+								}
+								return null;
+
+							}
+
+							@Override
+							protected void onPostExecute(String result) {
+								if(result != null) {
+									Uri uri = Uri.fromFile(new File(result));
+									core=null;
+									openPDF(uri);
+									CreatePDFView();
+								}
+							}
+						}.execute(mfilesview.getFileView().getFTPPath()+fileName,
+								Environment.getExternalStorageDirectory()+"/Student/.temp/"+fileName);
+					}
+					else {
+						Uri uri = Uri.fromFile(new File(path+fileName));
+						core=null;
+						openPDF(uri);
+						CreatePDFView();
+					}
 				}
 				
 				
@@ -525,8 +581,9 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			
 			@Override
 			public void onClick(View v) {
-				core.insertPageat(0);
-				mfilesview.setVisibility(View.INVISIBLE);
+				core.insertPageat(core.getCurrentPage());
+				mDocView.refresh(mReflow);
+				mfilesview.close();
 				mMenuButton.setVisibility(View.VISIBLE);
 			}
 		});
@@ -572,7 +629,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 					if (mTopBarMode == TopBarMode.Main)
 						hideButtons();
 				}
-				if(!mfilesview.isLocked()) mfilesview.setVisibility(View.INVISIBLE);
+				if(!mfilesview.isLocked()) mfilesview.close();
 
 				mMenuButton.setVisibility(View.VISIBLE);
 
@@ -667,7 +724,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			
 			@Override
 			public void onClick(View v) {
-				mfilesview.setVisibility(View.VISIBLE);
+				mfilesview.open();
 				hideButtons();
 				mMenuButton.setVisibility(View.INVISIBLE);
 				
@@ -908,8 +965,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			mAlertTask.cancel(true);
 			mAlertTask = null;
 		}
-		FTP.logout();
-		FTP.disconnect();
+		mfilesview.getFileView().disconnectFTP();
 		core = null;
 		super.onDestroy();
 	}

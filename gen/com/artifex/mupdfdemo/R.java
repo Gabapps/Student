@@ -165,6 +165,9 @@ public final class R {
         public static final int ink=0x7f070018;
         public static final int leaving_reflow_mode=0x7f070020;
         public static final int more=0x7f070031;
+        public static final int new_discipline=0x7f070037;
+        public static final int new_folder=0x7f070036;
+        public static final int new_page=0x7f070038;
         public static final int no=0x7f07001e;
         public static final int no_further_occurrences_found=0x7f07000f;
         public static final int no_media_hint=0x7f070004;

@@ -552,6 +552,9 @@ JNIEXPORT void JNICALL
 JNI_FN(MuPDFCore_insertPage)(JNIEnv *env, jobject thiz, int at)
 {
 	globals *glo = get_globals(env, thiz);
+	page_cache *pc = glo->pages;
+	int i = 0;
+
 	fz_rect rect;
 	rect.x0 = 0;
 	rect.y0 = 0;
@@ -561,15 +564,31 @@ JNI_FN(MuPDFCore_insertPage)(JNIEnv *env, jobject thiz, int at)
 			return;
 	fz_context *ctx = glo->ctx;
 	fz_try(ctx) {
+		LOGI("Inserting page at %d\n", at);
 		pdf_page* page = pdf_create_page(glo->doc, rect, glo->resolution, 0);
-		LOGI("%d pages before", fz_count_pages(glo->doc));
 		pdf_insert_page(glo->doc, page, at);
-		LOGI("%d pages after", fz_count_pages(glo->doc));
-		LOGI("Blank page inserted");
+
+		//dump page cache
+		for(i=0; i<NUM_CACHE; i++) {
+			if(pc[i].page != NULL) {
+				if(pc[i].number>=at) {
+					LOGI("Insert Page : ");
+					drop_page_cache(glo, &(pc[i]));
+				}
+			}
+		}
+
 	}
 	fz_catch(ctx) {
 		LOGE("Can't insert a page");
 	}
+}
+
+JNIEXPORT int JNICALL
+JNI_FN(MuPDFCore_getCurrentPageInternal)(JNIEnv *env, jobject thiz)
+{
+	globals *glo = get_globals(env, thiz);
+	return glo->pages[glo->current].number;
 }
 
 
@@ -1623,7 +1642,7 @@ JNI_FN(MuPDFCore_addInkAnnotationInternal)(JNIEnv * env, jobject thiz, jobjectAr
 	fz_point *pts = NULL;
 	int *counts = NULL;
 	int total = 0;
-	float *color1;//modified
+	float *color1;
 
 
 

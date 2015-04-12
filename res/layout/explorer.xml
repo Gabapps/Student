@@ -40,13 +40,13 @@
             android:id="@+id/new_page"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Nouvelle feuille" />
+            android:text="@string/new_page" />
         
         <Button
             android:id="@+id/new_folder"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Nouveau dossier" />
+            android:text="@string/new_folder" />
 
         
 

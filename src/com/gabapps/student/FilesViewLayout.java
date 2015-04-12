@@ -83,12 +83,12 @@ public class FilesViewLayout extends FrameLayout {
 				if(path.equals(workspace+"/")&&parent_folder.isEnabled()) {
 					parent_folder.setEnabled(false);
 					parent_folder.setVisibility(INVISIBLE);
-					new_folder.setText("Nouvelle matière");
+					new_folder.setText(R.string.new_discipline);
 				}
 				if(!path.equals(workspace+"/")&&!parent_folder.isEnabled()) {
 					parent_folder.setEnabled(true);
 					parent_folder.setVisibility(VISIBLE);
-					new_folder.setText("Nouveau dossier");
+					new_folder.setText(R.string.new_folder);
 				}
 				
 			}
@@ -198,13 +198,15 @@ public class FilesViewLayout extends FrameLayout {
 	}
 	
 	
+	
+	
 	public void dialogNewFolder() {
 		AlertDialog.Builder builder = new Builder(_context);
 		final EditText editText = new EditText(_context);
 		editText.setSingleLine();
 		builder.setView(editText);
-		builder.setTitle("Nouveau Dossier");
-		builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+		builder.setTitle(R.string.new_folder);
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -212,7 +214,7 @@ public class FilesViewLayout extends FrameLayout {
 			}
 		});
 		
-		builder.setPositiveButton("Nouveau dossier", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton(R.string.new_folder, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -225,5 +227,18 @@ public class FilesViewLayout extends FrameLayout {
 		});
 		
 		builder.show();
+	}
+	public void close() {
+		setVisibility(View.INVISIBLE);
+		//filesview.disconnectFTP();
+	}
+	
+	public void open() {
+		setVisibility(View.VISIBLE);
+		if(!FTP.isConnected())filesview.connectFTP();
+	}
+	
+	public FilesView getFileView() {
+		return filesview;
 	}
 }

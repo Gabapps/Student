@@ -54,4 +54,7 @@
 	<string name="copy_text">copy text</string>
 	<string name="format_currently_not_supported">Format currently not supported</string>
 	<string name="toggle_reflow_mode">Toggle reflow mode</string>
+	<string name="new_folder">New Folder</string>
+	<string name="new_discipline">New Discipline</string>
+	<string name="new_page">New page</string>
 </resources>
