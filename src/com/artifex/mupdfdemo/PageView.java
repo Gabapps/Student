@@ -118,6 +118,7 @@ public abstract class PageView extends ViewGroup {
 	private       TextWord  mText[][];
 	private       RectF     mItemSelectBox;
 	protected     ArrayList<ArrayList<PointF>> mDrawing;
+	protected     ArrayList<PointF> mLastDraw;
 	private       View      mSearchView;
 	private       boolean   mIsBlank;
 	private       boolean   mHighlightLinks;
@@ -402,7 +403,15 @@ public abstract class PageView extends ViewGroup {
 								canvas.drawCircle(p.x * scale, p.y * scale, INK_THICKNESS * scale / 2, paint);
 							}
 						}*/
-						drawPath(canvas, paint, scale);
+						new Runnable() {
+							
+							@Override
+							public void run() {
+								drawPath(canvas, paint, scale);
+								
+							}
+						}.run();
+						
 
 						paint.setStyle(Paint.Style.STROKE);
 						//canvas.drawPath(path, paint);
@@ -410,9 +419,16 @@ public abstract class PageView extends ViewGroup {
 				}
 				
 				void drawPath(Canvas canvas, Paint paint, float scale) {//TODO : do it in a Thread
-					for(int i=0;i<mDrawing.size();i++) {
-						for(int j=0; j<mDrawing.get(i).size()-1;j++) {
-							PointF v1=mDrawing.get(i).get(j), v2=mDrawing.get(i).get(j+1);
+					
+					Iterator<ArrayList<PointF>> it = mDrawing.iterator();
+					
+					while (it.hasNext()) {
+						ArrayList<PointF> arc = it.next();
+						Iterator<PointF> iit1 = arc.iterator();
+						Iterator<PointF> iit2 = arc.iterator();
+						iit2.next();
+						while (iit2.hasNext()) {
+							PointF v1 = iit1.next(), v2 = iit2.next();
 							canvas.drawLine(v1.x*scale, v1.y*scale, v2.x*scale, v2.y*scale, paint);
 						}
 					}
@@ -480,6 +496,7 @@ public abstract class PageView extends ViewGroup {
 			mDrawing = new ArrayList<ArrayList<PointF>>();
 
 		ArrayList<PointF> arc = new ArrayList<PointF>();
+		mLastDraw = arc;
 		arc.add(new PointF(docRelX, docRelY));
 		mDrawing.add(arc);
 		mSearchView.invalidate();
@@ -491,8 +508,7 @@ public abstract class PageView extends ViewGroup {
 		float docRelY = (y - getTop())/scale;
 
 		if (mDrawing != null && mDrawing.size() > 0) {
-			ArrayList<PointF> arc = mDrawing.get(mDrawing.size() - 1);
-			arc.add(new PointF(docRelX, docRelY));
+			mLastDraw.add(new PointF(docRelX, docRelY));
 			mSearchView.invalidate();
 		}
 	}

@@ -22,7 +22,6 @@ public class FilesViewAdapter extends ArrayAdapter<String> {
 	  static class ViewHolder {
 	    public TextView text;
 	    public ImageView image;
-	    public ImageButton download;
 	  }
 
 	  public FilesViewAdapter(Context context, String[] names, int folder_cursor) {
@@ -56,7 +55,6 @@ public class FilesViewAdapter extends ArrayAdapter<String> {
 	      viewHolder.text = (TextView) rowView.findViewById(R.id.filename);
 	      viewHolder.image = (ImageView) rowView
 	          .findViewById(R.id.fileicon);
-	      viewHolder.download = (ImageButton) rowView.findViewById(R.id.download);
 	      rowView.setTag(viewHolder);
 	    }
 

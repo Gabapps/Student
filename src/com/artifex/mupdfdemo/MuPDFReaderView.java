@@ -183,7 +183,7 @@ public class MuPDFReaderView extends ReaderView {
 
 	private float mX, mY;
 
-	private static final float TOUCH_TOLERANCE = 2;
+	private static final float TOUCH_TOLERANCE = 1;
 
 	private void touch_start(float x, float y) {
 		Log.d("Debug", ""+mScale);

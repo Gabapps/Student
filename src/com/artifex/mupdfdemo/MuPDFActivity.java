@@ -43,6 +43,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -507,7 +508,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		if (core == null)
 			return;
 		
-		final AsyncTask<String, Void, String> downloadFTPFile = new AsyncTask<String, Void, String>() {
+		/*final AsyncTask<String, Void, String> downloadFTPFile = new AsyncTask<String, Void, String>() {
 			@Override
 			protected String doInBackground(String... path) {
 				try {
@@ -529,22 +530,36 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 					CreatePDFView();
 				}
 			}
-		};
+		};*/
+		
+		final Activity main = this;
 		
 		OnFileSelectedListener selectlistener = new OnFileSelectedListener() {
 			
 			@Override
-			public void onSelected(String path, String fileName, boolean FTP) {
+			public void onSelected(String path, String fileName, boolean isFTP, final View view) {
 				Log.d("Debug", "File selected : "+fileName);
 				if(fileName.endsWith(".pdf")) {
 					Log.d("Debug", "It's a PDF file");
-					if(FTP) {
+					if(isFTP) {		
+						final ProgressBar bar = (ProgressBar)view.findViewById(R.id.downloadprogress);
+
+						//Progress bar update
+						//mfilesview.updateProgressDownload(view);				
 						new AsyncTask<String, Void, String>() {
 							@Override
 							protected String doInBackground(String... path) {
+								main.runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										bar.setVisibility(View.VISIBLE);
+										//text.setVisibility(GONE);
+									}
+								});
+								
 								try {
-									com.gabapps.student.FTP.downloadSingleFile(path[0], path[1]);
-									Log.d("FTP", "Downloaded file");
+									FTP.downloadSingleFile(path[0], path[1]);
+									Log.d("FTP", "File Downloaded");
 									return path[1];
 								} catch (IOException e) {
 									Log.e("FTP", "Can't download file");
@@ -555,6 +570,13 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 
 							@Override
 							protected void onPostExecute(String result) {
+								main.runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										bar.setVisibility(View.GONE);
+										//text.setVisibility(GONE);
+									}
+								});
 								if(result != null) {
 									Uri uri = Uri.fromFile(new File(result));
 									core=null;
@@ -577,6 +599,18 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			}
 		};
 		mfilesview.setOnFileSelected(selectlistener);
+		
+		final Context context = this;
+		
+		mfilesview.sendSettingsButtonListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intentsettings = new Intent(context, SettingsActivity.class);
+				startActivity(intentsettings);				
+			}
+		});
+		
 		mfilesview.sendnewPageListener(new OnClickListener() {
 			
 			@Override

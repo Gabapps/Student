@@ -2,15 +2,20 @@ package com.gabapps.student;
 
 import com.artifex.mupdfdemo.MuPDFCore;
 import com.artifex.mupdfdemo.R;
+import com.artifex.mupdfdemo.SettingsActivity;
 import com.gabapps.student.interfaces.OnCopyPasteListener;
 import com.gabapps.student.interfaces.OnFileSelectedListener;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -21,6 +26,8 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class FilesViewLayout extends FrameLayout {
 	public FilesViewLayout(Context context) {
@@ -40,6 +47,8 @@ public class FilesViewLayout extends FrameLayout {
 	private String workspace = Environment.getExternalStorageDirectory()+"/Student";
 	private FilesView filesview;
 	private ImageButton parent_folder;
+	private ImageButton connect;
+	private ImageButton settings;
 	private Button new_folder;
 	private Button new_page;
 	private LinearLayout paste_layout;
@@ -71,6 +80,8 @@ public class FilesViewLayout extends FrameLayout {
 		paste_layout=(LinearLayout)layout.findViewById(R.id.pastelayout);
 		paste=(Button)layout.findViewById(R.id.paste);		
 		cancelpaste=(Button)layout.findViewById(R.id.cancel);
+		connect=(ImageButton)layout.findViewById(R.id.connectftp);
+		settings=(ImageButton)layout.findViewById(R.id.settings_button);
 		paste_layout.setVisibility(GONE);
 		
 		
@@ -94,6 +105,55 @@ public class FilesViewLayout extends FrameLayout {
 			}
 		};
 		filesview.setOnPathChangedListener(pathlistener);
+		
+
+		final Activity main = (Activity)_context;
+		filesview.setOnConnectionListener(new OnConnectionListener() {
+			
+			@Override
+			public void onDisconnect() {
+				main.runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						connect.setImageResource(R.drawable.ic_connect_off);
+					}
+				});
+			}
+			
+			@Override
+			public void onConnect() {
+				main.runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						connect.setImageResource(R.drawable.ic_connect_on);
+					}
+				});
+			}
+			
+			@Override
+			public void onPostConnect() {
+				SharedPreferences prefs = _context.getSharedPreferences(SettingsActivity.PREFFILE, 0);
+
+				String username = prefs.getString(SettingsActivity.PREFUSER, "");
+				String password = prefs.getString(SettingsActivity.PREFPASS, "");
+				String address = prefs.getString(SettingsActivity.PREFADDR, "");
+				int port = prefs.getInt(SettingsActivity.PREFPORT, 0);
+				
+				if(port <= 0) port = 21;
+				
+				if(username.equals("") || password.equals("") || address.equals("")) {
+					Intent intentsettings = new Intent(_context, SettingsActivity.class);
+					_context.startActivity(intentsettings);
+				}
+				else {
+					FTP.setServer(address, port);
+					FTP.setUser(username, password);	
+				}
+			}
+		});
+		
 		filesview.openWorkspace(workspace);
 		filesview.makeBlankFile(blankFile);
 		
@@ -138,11 +198,29 @@ public class FilesViewLayout extends FrameLayout {
 			}
 		});
 		
+		connect.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(FTP.isConnected()) {
+					filesview.disconnectFTP();
+				}
+				else {
+					filesview.connectFTP();
+				}
+				
+			}
+		});
+		
 		addView(layout);
 	}
 	
 	public void sendnewPageListener(OnClickListener listener) {
 		new_page.setOnClickListener(listener);
+	}
+	
+	public void sendSettingsButtonListener(OnClickListener listener) {
+		settings.setOnClickListener(listener);
 	}
 	
 	public void startCopy(String file) {
@@ -165,8 +243,45 @@ public class FilesViewLayout extends FrameLayout {
 		if(_oncopypaste!=null) _oncopypaste.OnPaste(filesview.getPath()+filename);
 	}
 	
+	public void updateProgressDownload(View view) {
+		final Activity main = (Activity)_context;
+		final TextView text = (TextView)view.findViewById(R.id.filename);
+		final ProgressBar bar = (ProgressBar)view.findViewById(R.id.downloadprogress);
+
+		FTP.setOnDownloadingListener(new OnDownloadingListener() {
+
+			@Override
+			public void onDownloadStarted() {
+				main.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						bar.setVisibility(VISIBLE);
+						//text.setVisibility(GONE);
+					}
+				});
+			}
+
+			@Override
+			public void onDownloadProgressed(int progress) {
+			}
+
+			@Override
+			public void onDownloadFinished() {
+				main.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						//text.setVisibility(VISIBLE);
+						bar.setVisibility(GONE);
+					}
+				});
+
+			}
+		});
+	}
+	
 	public void cancelpaste() {
 		setLock(false);
+		filetopaste=null;
 		paste_layout.setVisibility(GONE);
 	}
 	
@@ -230,12 +345,11 @@ public class FilesViewLayout extends FrameLayout {
 	}
 	public void close() {
 		setVisibility(View.INVISIBLE);
-		//filesview.disconnectFTP();
 	}
 	
 	public void open() {
 		setVisibility(View.VISIBLE);
-		if(!FTP.isConnected())filesview.connectFTP();
+		filesview.checkFTP();
 	}
 	
 	public FilesView getFileView() {

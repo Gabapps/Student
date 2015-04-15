@@ -16,6 +16,7 @@ import com.gabapps.student.interfaces.OnFileSelectedListener;
 
 import com.artifex.mupdfdemo.R;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
@@ -23,6 +24,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -36,6 +39,14 @@ interface OnPathChangedListener {
 
 	public void onChanged(String path);
 
+}
+
+interface OnConnectionListener {
+	public void onConnect();
+	
+	public void onDisconnect();
+	
+	public void onPostConnect();
 }
 
 public class FilesView extends ListView {
@@ -62,10 +73,7 @@ public class FilesView extends ListView {
 		_Context = context;
 		setOnItemClickListener(_OnItemClick);
 
-		FTP.setServer("192.168.1.13", 21);
-
-		FTP.setUser("Gab", "");
-		connectFTP();
+		//connectFTP();
 		initASyncTask();
 	}
 
@@ -109,8 +117,10 @@ public class FilesView extends ListView {
 	// Event
 	private OnPathChangedListener _OnPathChangedListener = null;
 	private OnFileSelectedListener _OnFileSelectedListener = null;
+	private OnConnectionListener _OnConnectionListener = null;
 
 	private boolean _pathhaschanged = false;
+	private boolean _pathinFTPFolder = false;
 
 	private int ftpfile_cursor=0;
 	private int ftpfolder_cursor=0;
@@ -121,7 +131,7 @@ public class FilesView extends ListView {
 
 		_ftppath = path.substring(path.indexOf("Student/")+7, path.length());
 
-
+		checkFTP();
 		if(FTP.isConnected()) {
 			if(_pathhaschanged) {
 				ftpfiles=null;
@@ -294,6 +304,10 @@ public class FilesView extends ListView {
 
 	public void copy(String target, String newfile) {
 		try {
+			if(inFTPFolder()) {
+				File file = new File(_Path);
+				file.mkdirs();
+			}
 			InputStream inputStream = new FileInputStream(target);
 			FileOutputStream fileOutputStream = new FileOutputStream(newfile);
 
@@ -305,7 +319,9 @@ public class FilesView extends ListView {
 
 			fileOutputStream.close();
 			inputStream.close();
-		} catch (IOException e1) {}
+		} catch (IOException e1) {
+			Log.e("Copy", "Can't copy \"" + target + "\" in \"" + newfile + "\"");
+		}
 	}
 
 	public void cut(String target, String newfile) {
@@ -335,6 +351,10 @@ public class FilesView extends ListView {
 
 	public void setOnFileSelected(OnFileSelectedListener value) {
 		_OnFileSelectedListener = value;
+	}
+	
+	public void setOnConnectionListener(OnConnectionListener value) {
+		_OnConnectionListener = value;
 	}
 
 	public OnFileSelectedListener getOnFileSelected() {
@@ -366,27 +386,66 @@ public class FilesView extends ListView {
 	}
 	
 	public void connectFTP() {
-		new Thread(new Runnable() {
-			public void run() {
+		new AsyncTask<Void, Void, Void>() {
+			
+			@Override
+			protected Void doInBackground(Void... params) {
+				if(_OnConnectionListener != null) _OnConnectionListener.onPostConnect();
 				FTP.connect();
 				FTP.login();
+				return null;
+			}
+			
+			@Override
+			protected void onPostExecute(Void result) {
 				String temp = new String(_Path);
 				if(FTP.isConnected()) {
+					if(_OnConnectionListener != null) _OnConnectionListener.onConnect();
 					_Path = "waiting";
 					setPath(temp);
 				}
 			}
-		}).start();
+		}.execute();
 	}
 	
 	public void disconnectFTP() {
-		new Thread(new Runnable() {
-			public void run() {
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
 				FTP.disconnect();
 				FTP.logout();
+				return null;			
+			}
+			
+			@Override
+			protected void onPostExecute(Void result) {
+				if(!FTP.isConnected() &&_OnConnectionListener != null) {
+					_OnConnectionListener.onDisconnect();
+					ftpfiles = null;
+					String temp = new String(_Path);
+					_Path = "waiting";
+					setPath(temp);
 				}
 			}
-		).start();
+		}.execute();
+	}
+	
+	public void checkFTP() {
+		//Deconnection
+		if(FTP.hasDisconnected()) {
+			if(_OnConnectionListener != null) {
+				ftpfiles = null;
+				_OnConnectionListener.onDisconnect();
+				String temp = new String(_Path);
+				_Path = "waiting";
+				setPath(temp);
+			}
+		}
+	}
+	
+	public boolean inFTPFolder() {
+		return _pathinFTPFolder;
 	}
 
 	private String getRealPathName(String newPath) {
@@ -398,18 +457,25 @@ public class FilesView extends ListView {
 		return _Path + newPath;
 		//}
 	}
+	
 
 	private AdapterView.OnItemClickListener _OnItemClick = new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
 			String fileName = getItemAtPosition(position).toString();
+			//Is a folder
 			if (position < _FolderList.size()) {
+				//Is a FTP folder
+				_pathinFTPFolder = position >= ftpfolder_cursor;
 				setPath(getRealPathName(fileName));
-			} else {
+			}
+			//Is a file
+			else {
+				//Is a FTP file
 				 boolean isFTPFile = position>=ftpfile_cursor;
 
 				if (_OnFileSelectedListener != null)
-					_OnFileSelectedListener.onSelected(_Path, fileName, isFTPFile);
+					_OnFileSelectedListener.onSelected(_Path, fileName, isFTPFile, arg1);
 			}
 		}
 	};

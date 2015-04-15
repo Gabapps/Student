@@ -47,8 +47,20 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/new_folder" />
-
+        <ImageButton
+             android:id="@+id/connectftp"
+             android:layout_width="wrap_content"
+             android:layout_height="match_parent"
+             android:background="@drawable/button"
+             android:src="@drawable/ic_connect_off" />
         
+         <ImageButton
+             android:id="@+id/settings_button"
+             android:layout_width="wrap_content"
+             android:layout_height="match_parent"
+             android:layout_gravity="right"
+             android:background="@drawable/button"
+             android:src="@drawable/ic_settings" />
 
     </LinearLayout>
 
