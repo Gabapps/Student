@@ -111,6 +111,16 @@ public class FilesViewLayout extends FrameLayout {
 		filesview.setOnConnectionListener(new OnConnectionListener() {
 			
 			@Override
+			public void onLogin() {
+				
+			}
+			
+			@Override
+			public void onLogout() {
+				
+			}
+			
+			@Override
 			public void onDisconnect() {
 				main.runOnUiThread(new Runnable() {
 					
@@ -256,13 +266,14 @@ public class FilesViewLayout extends FrameLayout {
 					@Override
 					public void run() {
 						bar.setVisibility(VISIBLE);
-						//text.setVisibility(GONE);
+						text.setVisibility(GONE);
 					}
 				});
 			}
 
 			@Override
 			public void onDownloadProgressed(int progress) {
+				bar.setProgress(progress);
 			}
 
 			@Override
@@ -270,7 +281,7 @@ public class FilesViewLayout extends FrameLayout {
 				main.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						//text.setVisibility(VISIBLE);
+						text.setVisibility(VISIBLE);
 						bar.setVisibility(GONE);
 					}
 				});

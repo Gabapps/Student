@@ -26,7 +26,8 @@ public class FTP {
 	private static String login = "anonymous", password = "";
 	private static boolean wasConnected = false;
 	private static boolean isConnected = false;
-	private static boolean hasDisconnected = false;
+	private static boolean hasDisconnected = false; //not working
+	private static boolean isDownloading = false;
 	private static OnDownloadingListener downloadingListener = null;
 
 
@@ -44,13 +45,21 @@ public class FTP {
 	}
 
 	public static boolean isConnected()	 {
-		wasConnected = isConnected;
 		isConnected = client.isConnected();
-		if(wasConnected&&!isConnected) hasDisconnected=true;
+
+		if(wasConnected&&!isConnected&&!hasDisconnected) {
+			hasDisconnected=true;
+		}
+		wasConnected = isConnected;
 		return isConnected;
+	}
+	
+	public static boolean isDownloading() {
+		return isDownloading;
 	}
 
 	public static boolean hasDisconnected() {
+		isConnected();
 		boolean temp = hasDisconnected;
 		hasDisconnected = false;
 		return temp;
@@ -141,10 +150,10 @@ public class FTP {
 				new FileOutputStream(downloadFile));
 		InputStream inputStream = null;
 		try {
-			//if(downloadingListener != null) downloadingListener.onDownloadStarted();
+			if(downloadingListener != null) downloadingListener.onDownloadStarted();
 
-			/*FTPFile file = client.mlistFile(remoteFilePath);
-			long totallen = file.getSize();*/
+			FTPFile file = client.mlistFile(remoteFilePath);
+			long totallen = file.getSize();
 			
 			client.setFileType(2); //BINARY FILE TYPE
 			inputStream = client.retrieveFileStream(remoteFilePath);
@@ -152,27 +161,36 @@ public class FTP {
 			byte buf[] = new byte[4096];
 			long len;
 			
-			/*long cumulatelen = 0;
+			long cumulatelen = 0;
 			int dlpercent = 0;
-			int lastdlpercent = 0;*/
+			int lastdlpercent = 0;
+			isDownloading = true;
 			while((len=inputStream.read(buf))>0) {
 				outputStream.write(buf,0,(int)len);
+
 				
-				/*
 				cumulatelen+=len;
 				dlpercent = (int)(100*cumulatelen/totallen);
 				if(dlpercent-lastdlpercent > 2) {
 					if(downloadingListener != null) downloadingListener.onDownloadProgressed(dlpercent);
 					lastdlpercent=dlpercent;
-				}*/
+				}
 			}
+			if(!client.completePendingCommand()) {
+				client.logout();
+				client.disconnect();
+				Log.e("FTPDownload", "File transfer failed.");
+				return false;
+			}
+			
 			return true;
 		} catch (IOException ex) {
 			throw ex;
 		} finally {
+			isDownloading = false;
 			if (outputStream != null) outputStream.close();
 			if (inputStream != null) inputStream.close();
-			//if(downloadingListener != null) downloadingListener.onDownloadFinished();
+			if(downloadingListener != null) downloadingListener.onDownloadFinished();
 		}
 	}
 	public static void downloadDirectory(FTPClient ftpClient, String parentDir,

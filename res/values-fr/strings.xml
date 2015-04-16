@@ -10,6 +10,7 @@
 	<string name="choose_value">Choisir la valeur</string>
 	<string name="copied_to_clipboard">Copié dans le presse-papier</string>
 	<string name="copy">Copier</string>
+	<string name="rename">Renommer</string>
 	<string name="copy_text">copier le texte</string>
 	<string name="copy_text_to_the_clipboard">Copier le texte sur le presse-papier</string>
 	<string name="delete">Supprimer</string>
@@ -55,4 +56,8 @@
 	<string name="new_folder">Nouveau dossier</string>
 	<string name="new_discipline">Nouvelle matière</string>
 	<string name="new_page">Nouvelle page</string>
+	<string name="import_in_workspace">Souhaitez-vous importer ce fichier dans votre espace de travail ?</string>
+    <string name="workspace_created">L\'espace de travail a été créé</string>
+    <string name="workspace_error">L\'espace de travail ne peut être créé</string>
+    <string name="already_downloading">Vous êtes déjà en train de télécharger. Veuillez attendre la fin du téléchargement.</string>
 </resources>

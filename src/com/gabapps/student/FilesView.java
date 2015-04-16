@@ -44,6 +44,10 @@ interface OnPathChangedListener {
 interface OnConnectionListener {
 	public void onConnect();
 	
+	public void onLogin();
+	
+	public void onLogout();
+	
 	public void onDisconnect();
 	
 	public void onPostConnect();
@@ -273,10 +277,10 @@ public class FilesView extends ListView {
 		File file = new File(path);
 		if(!file.exists()) {
 			if(file.mkdir()) {
-				Toast.makeText(_Context, "L'espace de travail a été créé", 5).show();
+				Toast.makeText(_Context, R.string.workspace_created, 5).show();
 			}
 			else {
-				Toast.makeText(_Context, "L'espace de travail ne peut être créé", 5).show();
+				Toast.makeText(_Context, R.string.workspace_error, 5).show();
 			}
 		}
 		file = new File(path+"/.temp");
@@ -434,13 +438,14 @@ public class FilesView extends ListView {
 	public void checkFTP() {
 		//Deconnection
 		if(FTP.hasDisconnected()) {
-			if(_OnConnectionListener != null) {
+			/*if(_OnConnectionListener != null) {
 				ftpfiles = null;
 				_OnConnectionListener.onDisconnect();
 				String temp = new String(_Path);
 				_Path = "waiting";
 				setPath(temp);
-			}
+			}*/
+			connectFTP();
 		}
 	}
 	

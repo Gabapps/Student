@@ -47,6 +47,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 class ThreadPerTaskExecutor implements Executor {
@@ -293,8 +294,8 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 
 	public void dialogImportFile(final String path) {
 		AlertDialog.Builder builder = new Builder(this);
-		builder.setTitle("Souhaitez-vous importer ce fichier dans votre espace de travail ?");
-		builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+		builder.setTitle(R.string.import_in_workspace);
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -305,7 +306,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			}
 		});
 		
-		builder.setNeutralButton("Copier", new DialogInterface.OnClickListener() {
+		builder.setNeutralButton(R.string.copy, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -335,8 +336,8 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		editText.setSingleLine();
 		editText.setText(oldfile);
 		builder.setView(editText);
-		builder.setTitle("Renommer");
-		builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+		builder.setTitle(R.string.rename);
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -344,7 +345,7 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 			}
 		});
 		
-		builder.setPositiveButton("Renommer", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton(R.string.rename, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -508,84 +509,46 @@ public class MuPDFActivity extends Activity implements FilePicker.FilePickerSupp
 		if (core == null)
 			return;
 		
-		/*final AsyncTask<String, Void, String> downloadFTPFile = new AsyncTask<String, Void, String>() {
-			@Override
-			protected String doInBackground(String... path) {
-				try {
-					FTP.downloadSingleFile(path[0], path[1]);
-					return path[1];
-				} catch (IOException e) {
-					Log.e("FTP", "Can't download file");
-				}
-				return null;
-
-			}
-
-			@Override
-			protected void onPostExecute(String result) {
-				if(result != null) {
-					Uri uri = Uri.fromFile(new File(result));
-					core=null;
-					openPDF(uri);
-					CreatePDFView();
-				}
-			}
-		};*/
-		
-		final Activity main = this;
-		
 		OnFileSelectedListener selectlistener = new OnFileSelectedListener() {
 			
 			@Override
 			public void onSelected(String path, String fileName, boolean isFTP, final View view) {
 				Log.d("Debug", "File selected : "+fileName);
-				if(fileName.endsWith(".pdf")) {
+				if(fileName.toLowerCase().endsWith(".pdf")) {
 					Log.d("Debug", "It's a PDF file");
-					if(isFTP) {		
-						final ProgressBar bar = (ProgressBar)view.findViewById(R.id.downloadprogress);
-
-						//Progress bar update
-						//mfilesview.updateProgressDownload(view);				
-						new AsyncTask<String, Void, String>() {
-							@Override
-							protected String doInBackground(String... path) {
-								main.runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										bar.setVisibility(View.VISIBLE);
-										//text.setVisibility(GONE);
+					if(isFTP) {
+						
+						if(FTP.isDownloading()) {
+							Toast.makeText(getApplication(), R.string.already_downloading, Toast.LENGTH_SHORT).show();
+						}
+						else {
+							//Progress bar update
+							mfilesview.updateProgressDownload(view);				
+							new AsyncTask<String, Void, String>() {
+								@Override
+								protected String doInBackground(String... path) {
+									try {
+										FTP.downloadSingleFile(path[0], path[1]);
+										Log.d("FTP", "File Downloaded");
+										return path[1];
+									} catch (IOException e) {
+										Log.e("FTP", "Can't download file");
 									}
-								});
-								
-								try {
-									FTP.downloadSingleFile(path[0], path[1]);
-									Log.d("FTP", "File Downloaded");
-									return path[1];
-								} catch (IOException e) {
-									Log.e("FTP", "Can't download file");
+									return null;
 								}
-								return null;
 
-							}
-
-							@Override
-							protected void onPostExecute(String result) {
-								main.runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										bar.setVisibility(View.GONE);
-										//text.setVisibility(GONE);
+								@Override
+								protected void onPostExecute(String result) {
+									if(result != null) {
+										Uri uri = Uri.fromFile(new File(result));
+										core=null;
+										openPDF(uri);
+										CreatePDFView();
 									}
-								});
-								if(result != null) {
-									Uri uri = Uri.fromFile(new File(result));
-									core=null;
-									openPDF(uri);
-									CreatePDFView();
 								}
-							}
-						}.execute(mfilesview.getFileView().getFTPPath()+fileName,
-								Environment.getExternalStorageDirectory()+"/Student/.temp/"+fileName);
+							}.execute(mfilesview.getFileView().getFTPPath()+fileName,
+									Environment.getExternalStorageDirectory()+"/Student/.temp/"+fileName);
+						}
 					}
 					else {
 						Uri uri = Uri.fromFile(new File(path+fileName));

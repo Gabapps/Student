@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal" >
@@ -21,12 +20,11 @@
     <ProgressBar
         android:id="@+id/downloadprogress"
         android:visibility="gone"
-        android:layout_width="40dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="330dp"
         android:layout_height="40dp"
         android:layout_gravity="end"
         android:max="100"
         android:progress="0" />
-
-    <!-- style="?android:attr/progressBarStyleHorizontal" -->
 
 </LinearLayout>
