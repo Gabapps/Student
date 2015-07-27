@@ -4,6 +4,8 @@ This is a student-oriented Android PDF reader based on MuPDF.
 
 You can download the .apk file in the /apk directory.
 
-To add a file to the workspace, you need to place it with an explorer or with a computer in the /Student directory.
+Features :
+- Embedded FTP client : Allow universities to share PDF courses to their students online
+- Advanced annotations : Page insertion/deletion, drawing, underline and many other tools to customize your own PDF course
 
-A lot features are coming !
+A lot of features are coming !
